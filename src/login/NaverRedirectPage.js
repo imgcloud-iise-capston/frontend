@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -7,7 +6,7 @@ import { useAppContext } from "../context/AppContext";
 const NaverRedirectPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setUser } = useAppContext()
+  const { setUser } = useAppContext();
 
   const handleOAuthNaver = async (code) => {
     try {
@@ -18,10 +17,11 @@ const NaverRedirectPage = () => {
       const data = response.data; // 응답 데이터
       alert("로그인 성공");
       setUser({
-              email: data.email,
-              nickname: data.nickname,
-              picture: data.picture,
-            });
+        userId: data.userId,
+        email: data.email,
+        nickname: data.nickname,
+        picture: data.picture,
+      });
       navigate("/mainRepo");
     } catch (error) {
       navigate("/fail");

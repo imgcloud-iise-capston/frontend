@@ -22,6 +22,7 @@ const KakaoRedirectPage = () => {
       localStorage.setItem("nickname", data.nickname);
       localStorage.setItem("picture", data.picture);
       setUser({
+        userId: data.userId,
         email: data.email,
         nickname: data.nickname,
         picture: data.picture,
