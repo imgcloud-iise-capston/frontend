@@ -10,7 +10,10 @@ const Header = () => {
       <div className="userInfo">
         <div>
           <img
-            src={localStorage.getItem("picture") || "img/profile.svg"}
+            src={
+              localStorage.getItem("picture") ||
+              "frontend/public/img/profile.png"
+            } //undefind인경우해결하기
             style={{ width: "50px" }}
           ></img>
         </div>

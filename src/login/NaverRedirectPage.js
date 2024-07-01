@@ -16,6 +16,10 @@ const NaverRedirectPage = () => {
       );
       const data = response.data; // 응답 데이터
       alert("로그인 성공");
+      localStorage.setItem("email", data.email);
+      localStorage.setItem("nickname", data.nickname);
+      localStorage.setItem("picture", data.picture);
+      localStorage.setItem("userId", data.userId);
       setUser({
         userId: data.userId,
         email: data.email,

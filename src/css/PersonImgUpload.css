@@ -22,3 +22,18 @@
   padding: 20px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
+.upload-button {
+  background-color: rgb(99, 198, 255);
+  color: white;
+  font-weight: 700;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 20px;
+  bottom: 20px;
+  position: absolute;
+  right: 20px;
+  width: 100px;
+}

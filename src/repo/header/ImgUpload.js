@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const ImgUpload = React.forwardRef(({ repoType }, ref) => {
   const fileInputRef = useRef(null);
-  const { setPeopleRepo, setThingRepo, user } = useAppContext();
+  const { setPeopleRepo, setThingRepo } = useAppContext();
 
   React.useImperativeHandle(ref, () => ({
     triggerFileInput: () => {
@@ -86,6 +86,16 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
     });
   };
 
+  const formatFileSize = (size) => {
+    if (size >= 1048576) {
+      return (size / 1048576).toFixed(2) + " MB";
+    } else if (size >= 1024) {
+      return (size / 1024).toFixed(2) + " KB";
+    } else {
+      return size + " bytes";
+    }
+  };
+
   const handleImgChange = async (event) => {
     const files = event.target.files;
 
@@ -96,9 +106,20 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
     const formData = new FormData();
     const newImages = [];
 
+    const ISOList = [];
+    const FStopList = [];
+    const WhiteBalanceList = [];
+    const ExposureTimeList = [];
+    const ResolutionList = [];
+    const RealResolutionList = [];
+    const GPSLatitudeList = [];
+    const GPSLongitudeList = [];
+    const fileSizeList = []; // 파일 크기 리스트 추가
+
     for (let file of files) {
       const smallFile = await resizeImage(file, 70); // smallImage 생성
       const metadata = await extractMetadata(file); // 메타데이터 추출
+      const formattedSize = formatFileSize(file.size); // 파일 크기 변환
 
       newImages.push({
         id: uuidv4(),
@@ -108,12 +129,35 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
         preview: URL.createObjectURL(file),
         name: file.name,
         score: null,
+        size: formattedSize, // 파일 크기 추가
       });
+
+      ISOList.push(metadata.ISO);
+      FStopList.push(metadata.FStop);
+      WhiteBalanceList.push(metadata.WhiteBalance);
+      ExposureTimeList.push(metadata.ExposureTime);
+      ResolutionList.push(metadata.Resolution);
+      RealResolutionList.push(metadata.RealResolution);
+      GPSLatitudeList.push(metadata.GPSLatitude);
+      GPSLongitudeList.push(metadata.GPSLongitude);
+      fileSizeList.push(formattedSize); // 파일 크기 리스트에 추가
 
       formData.append("image", file);
       formData.append("smallFiles", smallFile); // smallImage 추가
-      formData.append("metadata", JSON.stringify(metadata)); // 메타데이터 추가 (백엔드 전송용, brisque점수계산에 안들어감)
     }
+
+    // 리스트 형태의 메타데이터를 독립적으로 추가
+    formData.append("ISO", JSON.stringify(ISOList));
+    formData.append("FStop", JSON.stringify(FStopList));
+    formData.append("WhiteBalance", JSON.stringify(WhiteBalanceList));
+    formData.append("ExposureTime", JSON.stringify(ExposureTimeList));
+    formData.append("Resolution", JSON.stringify(ResolutionList));
+    formData.append("RealResolution", JSON.stringify(RealResolutionList));
+    formData.append("GPSLatitude", JSON.stringify(GPSLatitudeList));
+    formData.append("GPSLongitude", JSON.stringify(GPSLongitudeList));
+    formData.append("size", JSON.stringify(fileSizeList)); // 파일 크기 추가
+
+    console.log("ISO : ", JSON.stringify(ISOList));
 
     const titles = newImages.map((img) => img.name); // 이미지 제목 리스트
     formData.append("imageTitle", JSON.stringify({ titles })); // 제목 JSON 추가
@@ -131,11 +175,12 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            userId: user.userId,
+            userId: localStorage.getItem("userId"),
           },
         }
       );
       const scores = response.data;
+      console.log("userId", localStorage.getItem("userId"));
 
       if (repoType === "people") {
         setPeopleRepo((prev) =>
@@ -159,6 +204,20 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
               : img;
           })
         );
+
+        // 업로드 후 리스트 다시 가져오기
+        const fetchThingImages = async () => {
+          try {
+            const response = await axios.get("/load/thing", {
+              params: { userId: localStorage.getItem("userId") },
+            });
+            setThingRepo(response.data);
+          } catch (error) {
+            console.error("Error fetching thing images", error);
+          }
+        };
+
+        fetchThingImages();
       }
     } catch (error) {
       console.error("Brisque 점수 계산 실패:", error);

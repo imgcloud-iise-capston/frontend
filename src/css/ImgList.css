@@ -1,7 +1,7 @@
 .list {
   display: flex;
   flex-direction: column;
-  padding: 0px 20px; /* Matching padding with RepoNavi */
+  padding: 0px px; /* Matching padding with RepoNavi */
 }
 
 .sort {
@@ -18,10 +18,10 @@
 .filename {
   width: 200px;
   text-align: left;
-  word-wrap: break-word; /* Ensures long filenames wrap to the next line */
-  white-space: normal; /* Allows text to wrap */
-  overflow: hidden; /* Hides any overflowing text */
-  text-overflow: ellipsis; /* Adds ellipsis (...) to indicate overflow */
+  word-wrap: break-word;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .score {
@@ -30,7 +30,9 @@
 }
 
 .list .blank {
+  display: flex;
   width: 70px;
+  gap: 10px;
   height: 70px;
   object-fit: cover;
 }
