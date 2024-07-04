@@ -99,6 +99,7 @@ const PersonImgUpload = React.forwardRef(({ repoType }, ref) => {
               GPSLatitude: convertDMSToString(allMetaData.GPSLatitude), // 위도
               GPSLongitude: convertDMSToString(allMetaData.GPSLongitude), // 경도
             };
+
             console.log(`Metadata for ${file.name}:`, metadata);
             resolve(metadata);
           });
@@ -160,20 +161,53 @@ const PersonImgUpload = React.forwardRef(({ repoType }, ref) => {
           type: "application/json",
         })
       );
-      formData.append(
-        "FStop",
-        new Blob([JSON.stringify(metadata.FStop)], { type: "application/json" })
-      );
-      formData.append(
-        "ISO",
-        new Blob([JSON.stringify(metadata.ISO)], { type: "application/json" })
-      );
-      formData.append(
-        "ExposureTime",
-        new Blob([JSON.stringify(metadata.ExposureTime)], {
-          type: "application/json",
-        })
-      );
+      if (metadata.Fstop === null || metadata.Fstop === undefined) {
+        formData.append(
+          "FStop",
+          new Blob([JSON.stringify(0.0)], {
+            type: "application/json",
+          })
+        );
+      } else {
+        formData.append(
+          "FStop",
+          new Blob([JSON.stringify(metadata.FStop)], {
+            type: "application/json",
+          })
+        );
+      }
+
+      if (metadata.ISO === null || metadata.ISO === undefined) {
+        formData.append(
+          "ISO",
+          new Blob([JSON.stringify(0.0)], { type: "application/json" })
+        );
+      } else {
+        formData.append(
+          "ISO",
+          new Blob([JSON.stringify(metadata.ISO)], { type: "application/json" })
+        );
+      }
+
+      if (
+        metadata.ExposureTime === null ||
+        metadata.ExposureTime === undefined
+      ) {
+        formData.append(
+          "ExposureTime",
+          new Blob([JSON.stringify(0.0)], {
+            type: "application/json",
+          })
+        );
+      } else {
+        formData.append(
+          "ExposureTime",
+          new Blob([JSON.stringify(metadata.ExposureTime)], {
+            type: "application/json",
+          })
+        );
+      }
+
       formData.append(
         "GPSLatitude",
         new Blob([JSON.stringify(metadata.GPSLatitude)], {
