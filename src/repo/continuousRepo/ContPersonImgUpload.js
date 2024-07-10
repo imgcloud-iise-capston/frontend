@@ -1,6 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
-import EXIF from "exif-js";
 import { useAppContext } from "../../context/AppContext";
 import { v4 as uuidv4 } from "uuid";
 import Cropper from "react-cropper";
@@ -14,7 +13,7 @@ const ContPersonImgUpload = React.forwardRef(({ repoType }, ref) => {
   const fileInputRef = useRef(null);
   const cropperRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { setContPeopleRepo, user } = useAppContext();
+  const { setContPeopleRepo } = useAppContext();
   const [selectedFiles, setSelectedFiles] = useState([]); // 여러 파일 상태 추가
   const [selectedFileNames, setSelectedFileNames] = useState([]); // 원래 파일명 상태 추가
   const [formData, setFormData] = useState(new FormData()); // formData 상태 추가
@@ -97,11 +96,15 @@ const ContPersonImgUpload = React.forwardRef(({ repoType }, ref) => {
         const scores = response.data;
 
         setContPeopleRepo((prev) =>
-          prev.map((img, index) =>
-            newImages.find((newImg) => newImg.id === img.id)
-              ? { ...img, score: scores[index] }
-              : img
-          )
+          prev.map((img) => {
+            const newImgIndex = newImages.findIndex(
+              (newImg) => newImg.id === img.id
+            );
+            if (newImgIndex !== -1) {
+              return { ...img, score: scores[newImgIndex] };
+            }
+            return img;
+          })
         );
       } catch (error) {
         console.error("Brisque score calculation failed:", error);

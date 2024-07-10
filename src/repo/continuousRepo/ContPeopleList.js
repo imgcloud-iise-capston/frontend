@@ -9,10 +9,8 @@ const ContPeopleList = ({ onSelectedIdsChange }) => {
 
   const handleCheckboxChange = (file) => {
     setSelectedFiles((prevSelectedFiles) => {
-      const newSelectedFiles = prevSelectedFiles.some(
-        (f) => f.thingId === file.thingId
-      )
-        ? prevSelectedFiles.filter((f) => f.thingId !== file.thingId)
+      const newSelectedFiles = prevSelectedFiles.some((f) => f.id === file.id)
+        ? prevSelectedFiles.filter((f) => f.id !== file.id)
         : [...prevSelectedFiles, file];
       onSelectedIdsChange(newSelectedFiles);
       return newSelectedFiles;
@@ -25,9 +23,7 @@ const ContPeopleList = ({ onSelectedIdsChange }) => {
         <div key={img.id} className="sort">
           <div className="blank">
             <Checkbox
-              checked={selectedFiles.some(
-                (file) => file.peopleId === img.peopleIdId
-              )}
+              checked={selectedFiles.some((file) => file.id === img.id)}
               onChange={() => handleCheckboxChange(img)}
             />
             <img

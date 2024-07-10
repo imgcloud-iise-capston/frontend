@@ -1,10 +1,22 @@
+import React from "react";
 import { useAppContext } from "../../context/AppContext";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../css/Header.css";
-import { Link } from "react-router-dom";
 
 const Header = ({ theme }) => {
-  // theme props를 받도록 수정
   const { user } = useAppContext();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await axios.post("/logout");
+      localStorage.clear();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div className="header">
@@ -35,7 +47,7 @@ const Header = ({ theme }) => {
           </Link>
         )}
         <button>결제관리</button>
-        <button>로그아웃</button>
+        <button onClick={handleLogout}>로그아웃</button>
       </div>
     </div>
   );
