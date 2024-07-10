@@ -76,6 +76,7 @@ const ContPersonImgUpload = React.forwardRef(({ repoType }, ref) => {
         file,
         preview: URL.createObjectURL(file),
         name: selectedFileNames[index],
+        fileType: selectedFileNames[index].split(".").pop(),
         score: null,
       }));
 
@@ -83,7 +84,7 @@ const ContPersonImgUpload = React.forwardRef(({ repoType }, ref) => {
 
       try {
         const response = await axios.post(
-          "http://localhost:8080/calculate/personBrisque",
+          "http://localhost:8080/calculate/continuousImage/people",
           formData,
           {
             headers: {
