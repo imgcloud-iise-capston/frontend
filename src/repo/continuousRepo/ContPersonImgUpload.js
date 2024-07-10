@@ -68,6 +68,7 @@ const ContPersonImgUpload = React.forwardRef(({ repoType }, ref) => {
           type: "application/json",
         })
       );
+      formData.append("fileType", selectedFileNames[0].split(".").pop());
 
       formData.append("userId", localStorage.getItem("userId"));
 
