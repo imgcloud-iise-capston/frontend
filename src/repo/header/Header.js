@@ -1,8 +1,9 @@
-//로고, 회원 정보, 기타 메뉴
 import { useAppContext } from "../../context/AppContext";
 import "../../css/Header.css";
+import { Link } from "react-router-dom";
 
-const Header = () => {
+const Header = ({ theme }) => {
+  // theme props를 받도록 수정
   const { user } = useAppContext();
 
   return (
@@ -24,7 +25,15 @@ const Header = () => {
         <img src="img/imgcloud_logo.png" />
       </div>
       <div className="menu">
-        <button>연속사진</button>
+        {theme === "cont" ? (
+          <Link to="/mainRepo">
+            <button>기본레포</button>
+          </Link>
+        ) : (
+          <Link to="/contRepo">
+            <button>연속사진</button>
+          </Link>
+        )}
         <button>결제관리</button>
         <button>로그아웃</button>
       </div>

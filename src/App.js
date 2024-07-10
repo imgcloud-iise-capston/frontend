@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import KakaoRedirectPage from "./login/KakaoRedirectPage";
-import NaverRedirectPage from "./login/NaverRedirectPage"
+import NaverRedirectPage from "./login/NaverRedirectPage";
 import Login from "./login/Login";
 import MainRepo from "./repo/MainRepo";
+import ContRepo from "./repo/ContRepo";
 
 const App = () => {
   return (
@@ -17,10 +18,11 @@ const App = () => {
             element={<KakaoRedirectPage />}
           ></Route>
           <Route
-             path="/oauth/redirected/naver"
-             element={<NaverRedirectPage />}
-           ></Route>
+            path="/oauth/redirected/naver"
+            element={<NaverRedirectPage />}
+          ></Route>
           <Route path="/mainRepo" element={<MainRepo />}></Route>
+          <Route path="/contRepo" element={<ContRepo />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

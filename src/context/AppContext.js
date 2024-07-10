@@ -8,6 +8,8 @@ export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [peopleRepo, setPeopleRepo] = useState([]);
   const [thingRepo, setThingRepo] = useState([]);
+  const [contPeopleRepo, setContPeopleRepo] = useState([]);
+  const [contThingRepo, setContThingRepo] = useState([]);
 
   return (
     <AppContext.Provider
@@ -18,6 +20,10 @@ export const AppProvider = ({ children }) => {
         setPeopleRepo,
         thingRepo,
         setThingRepo,
+        contPeopleRepo,
+        setContPeopleRepo,
+        contThingRepo,
+        setContThingRepo,
       }}
     >
       {children}
