@@ -20,7 +20,11 @@ const ContPeopleRepo = () => {
 
   return (
     <div style={style}>
-      <ContRepoNavi repoName="인물 연속사진" repoType="contPeople" />
+      <ContRepoNavi
+        repoName="인물 연속사진"
+        repoType="contPeople"
+        selectedFiles={selectedFiles}
+      />
       <Sort />
       <ContPeopleList onSelectedIdsChange={handleSelectedIdsChange} />
     </div>

@@ -20,7 +20,11 @@ const ContThingRepo = () => {
 
   return (
     <div style={style}>
-      <ContRepoNavi repoName="풍경 및 사물 연속사진" repoType="contThing" />
+      <ContRepoNavi
+        repoName="풍경 및 사물 연속사진"
+        repoType="contThing"
+        selectedFiles={selectedFiles}
+      />
       <Sort />
       <ContThingList onSelectedIdsChange={handleSelectedIdsChange} />
     </div>

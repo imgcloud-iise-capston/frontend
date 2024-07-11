@@ -2,9 +2,10 @@ import "../../css/RepoNavi.css";
 import React, { useRef } from "react";
 import ContImgUpload from "./ContImgUpload";
 import ContPersonImgUpload from "./ContPersonImgUpload";
+import ContPeopleSave from "./ContPeopleSave";
+import ContThingSave from "./ContThingSave";
 
-// 나중에 .png .svg 파일로 바꾸기
-const ContRepoNavi = ({ repoName, repoType }) => {
+const ContRepoNavi = ({ repoName, repoType, selectedFiles }) => {
   const imgUploadRef = useRef(null);
 
   const handleUploadClick = () => {
@@ -24,6 +25,11 @@ const ContRepoNavi = ({ repoName, repoType }) => {
           <img src="img/upload.png" />
           <div>사진 올리기</div>
         </div>
+        {repoType === "contThing" ? (
+          <ContThingSave selectedFiles={selectedFiles} />
+        ) : (
+          <ContPeopleSave selectedFiles={selectedFiles} />
+        )}
       </div>
     </div>
   );
