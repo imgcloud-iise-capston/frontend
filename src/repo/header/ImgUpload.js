@@ -115,11 +115,25 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
     const GPSLatitudeList = [];
     const GPSLongitudeList = [];
     const fileSizeList = []; // 파일 크기 리스트 추가
+    const metaScoreList = [];
 
     for (let file of files) {
       const smallFile = await resizeImage(file, 70); // smallImage 생성
       const metadata = await extractMetadata(file); // 메타데이터 추출
       const formattedSize = formatFileSize(file.size); // 파일 크기 변환
+
+      // 메타데이터 품질 점수 계산
+      let metaScore = 0;
+      if (metadata.ISO && metadata.ISO >= 100) metaScore += 1;
+      if (metadata.FStop && metadata.FStop >= 1.0) metaScore += 1;
+      if (metadata.WhiteBalance !== undefined) metaScore += 1;
+      if (metadata.ExposureTime && metadata.ExposureTime > 0) metaScore += 1;
+      if (
+        metadata.Resolution &&
+        metadata.Resolution !== "undefinedxundefined" &&
+        metadata.Resolution !== null
+      )
+        metaScore += 1;
 
       newImages.push({
         id: uuidv4(),
@@ -141,6 +155,7 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
       GPSLatitudeList.push(metadata.GPSLatitude);
       GPSLongitudeList.push(metadata.GPSLongitude);
       fileSizeList.push(formattedSize); // 파일 크기 리스트에 추가
+      metaScoreList.push(metaScore);
 
       formData.append("image", file);
       formData.append("smallFiles", smallFile); // smallImage 추가
@@ -155,7 +170,8 @@ const ImgUpload = React.forwardRef(({ repoType }, ref) => {
     formData.append("RealResolution", JSON.stringify(RealResolutionList));
     formData.append("GPSLatitude", JSON.stringify(GPSLatitudeList));
     formData.append("GPSLongitude", JSON.stringify(GPSLongitudeList));
-    formData.append("size", JSON.stringify(fileSizeList)); // 파일 크기 추가
+    formData.append("size", JSON.stringify(fileSizeList));
+    formData.append("metaScore", JSON.stringify(metaScoreList));
 
     console.log("ISO : ", JSON.stringify(ISOList));
 

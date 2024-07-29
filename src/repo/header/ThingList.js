@@ -4,10 +4,13 @@ import { useAppContext } from "../../context/AppContext";
 import "../../css/ImgList.css";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
+import DetailModal from "./DetailModal";
 
 const ThingList = ({ onSelectedIdsChange }) => {
   const { thingRepo, setThingRepo } = useAppContext();
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState(null);
 
   const userId = localStorage.getItem("userId");
 
@@ -38,6 +41,26 @@ const ThingList = ({ onSelectedIdsChange }) => {
     fetchThingImages();
   }, [userId, setThingRepo]);
 
+  const handleDetailClick = async (img) => {
+    try {
+      console.log("thing ID : ", img.thingId);
+      const response = await axios.get("/load/meta/thing", {
+        params: {
+          thingId: img.thingId,
+        },
+      });
+      const metadata = response.data;
+
+      console.log("metadata : ", metadata);
+
+      setSelectedDetail({ ...img, metadata });
+
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching metadata", error);
+    }
+  };
+
   return (
     <div className="list">
       {thingRepo.map((img) => (
@@ -57,10 +80,19 @@ const ThingList = ({ onSelectedIdsChange }) => {
           <div className="filename">{img.imageTitle}</div>
           <div className="score">{img.brisqueScore}</div>
           <div className="detail">
-            <Button variant="contained">상세보기</Button>
+            <Button variant="contained" onClick={() => handleDetailClick(img)}>
+              상세보기
+            </Button>
           </div>
         </div>
       ))}
+      {isModalOpen && (
+        <DetailModal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          detailData={selectedDetail}
+        />
+      )}
     </div>
   );
 };

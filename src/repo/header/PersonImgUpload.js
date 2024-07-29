@@ -149,6 +149,21 @@ const PersonImgUpload = React.forwardRef(({ repoType }, ref) => {
       const smallFile = await resizeImage(selectedFileObject, 70); // smallImage 생성
       const metadata = await extractMetadata(selectedFileObject); // 메타데이터 추출
 
+      // 메타데이터 품질 점수 계산
+      let metaScore = 0;
+      if (metadata.ISO && metadata.ISO >= 100) metaScore += 1;
+      if (metadata.FStop && metadata.FStop >= 1.0) metaScore += 1;
+      if (metadata.WhiteBalance !== undefined) metaScore += 1;
+      if (metadata.ExposureTime && metadata.ExposureTime > 0) metaScore += 1;
+      if (
+        metadata.Resolution &&
+        metadata.Resolution !== "0x0" &&
+        metadata.Resolution !== null
+      )
+        metaScore += 1;
+
+      console.log("메타데이터 점수 : ", metaScore);
+
       formData.append(
         "cropData",
         new Blob([JSON.stringify(cropData)], { type: "application/json" })
@@ -239,6 +254,10 @@ const PersonImgUpload = React.forwardRef(({ repoType }, ref) => {
         })
       );
       formData.append("userId", localStorage.getItem("userId"));
+      formData.append(
+        "metaScore",
+        new Blob([JSON.stringify(metaScore)], { type: "application/json" })
+      );
 
       const newImage = {
         id: uuidv4(),
@@ -246,6 +265,7 @@ const PersonImgUpload = React.forwardRef(({ repoType }, ref) => {
         preview: URL.createObjectURL(selectedFileObject),
         name: selectedFileName,
         score: null,
+        metaScore: metaScore,
       };
 
       setPeopleRepo((prev) => [...prev, newImage]);

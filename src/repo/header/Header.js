@@ -23,7 +23,7 @@ const Header = ({ theme }) => {
       <div className="userInfo">
         <div>
           <img
-            src={localStorage.getItem("picture") || "img/profile.png"}
+            src={localStorage.getItem("picture") || "/img/profile.png"}
             style={{ width: "50px" }}
           ></img>
         </div>

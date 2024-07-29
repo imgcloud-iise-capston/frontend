@@ -33,6 +33,7 @@ const PeopleRepo = () => {
       );
 
       window.location.reload(); // 업데이트된 목록을 보여주기 위해 페이지를 새로고침
+      console.log("selected Id :", selectedIds);
     } catch (error) {
       console.error("이미지 삭제 중 오류 발생", error);
     }

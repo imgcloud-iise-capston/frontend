@@ -4,10 +4,13 @@ import { useAppContext } from "../../context/AppContext";
 import "../../css/ImgList.css";
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
+import DetailModal from "./DetailModal";
 
 const PeopleList = ({ onSelectedIdsChange }) => {
   const { peopleRepo, setPeopleRepo } = useAppContext();
   const [selectedFiles, setSelectedFiles] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDetail, setSelectedDetail] = useState(null);
 
   const userId = localStorage.getItem("userId");
 
@@ -17,6 +20,7 @@ const PeopleList = ({ onSelectedIdsChange }) => {
         params: { userId },
       });
       setPeopleRepo(response.data);
+      console.log(peopleRepo);
     } catch (error) {
       console.error("Error fetching people images", error);
     }
@@ -29,9 +33,29 @@ const PeopleList = ({ onSelectedIdsChange }) => {
       )
         ? prevSelectedFiles.filter((f) => f.peopleId !== file.peopleId)
         : [...prevSelectedFiles, file];
-      onSelectedIdsChange(newSelectedFiles); // 부모 컴포넌트로 선택된 파일들 전달
+      onSelectedIdsChange(newSelectedFiles);
       return newSelectedFiles;
     });
+  };
+
+  const handleDetailClick = async (img) => {
+    try {
+      console.log("people ID : ", img.peopleId);
+      const response = await axios.get("/load/meta/people", {
+        params: {
+          peopleId: img.peopleId,
+        },
+      });
+      const metadata = response.data;
+
+      console.log("metadata : ", metadata);
+
+      setSelectedDetail({ ...img, metadata });
+
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching metadata", error);
+    }
   };
 
   useEffect(() => {
@@ -57,10 +81,19 @@ const PeopleList = ({ onSelectedIdsChange }) => {
           <div className="filename">{img.imageTitle}</div>
           <div className="score">{img.brisqueScore}</div>
           <div className="detail">
-            <Button variant="contained">상세보기</Button>
+            <Button variant="contained" onClick={() => handleDetailClick(img)}>
+              상세보기
+            </Button>
           </div>
         </div>
       ))}
+      {isModalOpen && (
+        <DetailModal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          detailData={selectedDetail}
+        />
+      )}
     </div>
   );
 };
