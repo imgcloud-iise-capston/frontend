@@ -48,7 +48,7 @@ const ThingRepo = () => {
       const imageUrls = response.data;
 
       imageUrls.forEach((url, index) => {
-        fetch(url)
+        fetch(url, { mode: "no-cors" })
           .then((res) => res.blob())
           .then((blob) => {
             const blobURL = URL.createObjectURL(blob);
@@ -77,7 +77,7 @@ const ThingRepo = () => {
 
       const zip = new JSZip();
       const promises = imageUrls.map(async (url, index) => {
-        const response = await fetch(url);
+        const response = await fetch(url, { mode: "no-cors" });
         const blob = await response.blob();
         const fileName = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
         zip.file(fileName, blob);
