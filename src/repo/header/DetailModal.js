@@ -2,18 +2,23 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "../../css/DetailModal.css";
 import imageCompression from "browser-image-compression";
-import { jsPDF } from 'jspdf';
+import { jsPDF } from "jspdf";
 
 // ImageConverter 컴포넌트 정의를 최상단으로 이동
-const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, setFileExtension }) => {
-  const [convertedSizeMB, setConvertedSizeMB] = useState('');
+const ImageConverter = ({
+  blobData,
+  setTransformedImageUrl,
+  setDownloadLink,
+  setChangeFileExtension,
+}) => {
+  const [convertedSizeMB, setConvertedSizeMB] = useState("");
   const [showFormatOptions, setShowFormatOptions] = useState(false);
 
   const handleImageTypeChange = async (type) => {
     try {
       let newBlob;
 
-      if (type === 'pdf') {
+      if (type === "pdf") {
         // PDF로 변환
         const imgData = await convertBlobToDataUrl(blobData);
         const img = new Image();
@@ -21,19 +26,19 @@ const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, set
 
         img.onload = () => {
           const pdf = new jsPDF({
-            orientation: img.width > img.height ? 'landscape' : 'portrait', // 이미지의 가로 세로 비율에 맞춰 PDF 페이지 방향 설정
-            unit: 'px',
-            format: [img.width, img.height] // PDF 페이지 크기를 이미지 크기로 설정
+            orientation: img.width > img.height ? "landscape" : "portrait", // 이미지의 가로 세로 비율에 맞춰 PDF 페이지 방향 설정
+            unit: "px",
+            format: [img.width, img.height], // PDF 페이지 크기를 이미지 크기로 설정
           });
 
           // PDF의 크기를 이미지의 크기와 동일하게 설정하여 이미지 전체가 포함되도록 함
-          pdf.addImage(imgData, 'JPEG', 0, 0, img.width, img.height); // 이미지 전체를 PDF에 추가
+          pdf.addImage(imgData, "JPEG", 0, 0, img.width, img.height); // 이미지 전체를 PDF에 추가
 
-          const pdfBlob = pdf.output('blob'); // PDF Blob 생성
-          newBlob = new Blob([pdfBlob], { type: 'application/pdf' });
+          const pdfBlob = pdf.output("blob"); // PDF Blob 생성
+          newBlob = new Blob([pdfBlob], { type: "application/pdf" });
 
           // 파일 확장자 설정
-          setFileExtension('pdf');
+          setChangeFileExtension("pdf");
 
           const newImageUrl = URL.createObjectURL(newBlob);
           setTransformedImageUrl(newImageUrl);
@@ -43,11 +48,11 @@ const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, set
         return; // PDF 처리 완료 후 바로 반환
       } else {
         // JPEG 또는 PNG로 변환
-        const newType = type === 'jpeg' ? 'image/jpeg' : 'image/png';
+        const newType = type === "jpeg" ? "image/jpeg" : "image/png";
         newBlob = new Blob([blobData], { type: newType });
 
         // 파일 확장자 설정
-        setFileExtension(type === 'jpeg' ? 'jpeg' : 'png');
+        setChangeFileExtension(type === "jpeg" ? "jpeg" : "png");
       }
 
       const newSize = newBlob.size;
@@ -60,7 +65,7 @@ const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, set
       // 다운로드 링크 설정
       setDownloadLink(newImageUrl);
     } catch (error) {
-      console.error('Image conversion error:', error);
+      console.error("Image conversion error:", error);
     }
   };
 
@@ -87,9 +92,15 @@ const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, set
       <button onClick={handleFormatButtonClick}>파일포맷 변환</button>
       {showFormatOptions && (
         <div className="formatOptions">
-          <button onClick={() => handleFormatOptionClick('jpeg')}>JPEG로 변환</button>
-          <button onClick={() => handleFormatOptionClick('png')}>PNG로 변환</button>
-          <button onClick={() => handleFormatOptionClick('pdf')}>PDF로 변환</button>
+          <button onClick={() => handleFormatOptionClick("jpeg")}>
+            JPEG로 변환
+          </button>
+          <button onClick={() => handleFormatOptionClick("png")}>
+            PNG로 변환
+          </button>
+          <button onClick={() => handleFormatOptionClick("pdf")}>
+            PDF로 변환
+          </button>
         </div>
       )}
     </>
@@ -99,6 +110,7 @@ const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, set
 const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [metaScore, setMetaScore] = useState(0);
   const [fileExtension, setFileExtension] = useState("");
+  const [changeFileExtension, setChangeFileExtension] = useState("");
   const [transformedImageUrl, setTransformedImageUrl] = useState("");
   const [downloadLink, setDownloadLink] = useState(""); // 다운로드 링크 상태 추가
   const [blobData, setBlobData] = useState(null);
@@ -123,6 +135,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       const title = detailData.imageTitle[0];
       const extension = title.slice(-3).toLowerCase();
       setFileExtension(extension);
+      setChangeFileExtension(extension);
 
       if (detailData.base64) {
         let contentType = "";
@@ -182,9 +195,9 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   // 다운로드 버튼 클릭 핸들러
   const handleDownload = () => {
     if (downloadLink) {
-      const a = document.createElement('a'); // 동적으로 <a> 태그 생성
+      const a = document.createElement("a"); // 동적으로 <a> 태그 생성
       a.href = downloadLink;
-      a.download = `${detailData.imageTitle}.${fileExtension}`; // 파일명과 확장자 설정
+      a.download = `${detailData.imageTitle}.${changeFileExtension}`; // 파일명과 확장자 설정
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a); // 다운로드 후 <a> 태그 제거
@@ -199,7 +212,9 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     >
       <div className="modalHeader">
         <h2>상세보기</h2>
-        <button onClick={onRequestClose} className="closeButton">✕</button>
+        <button onClick={onRequestClose} className="closeButton">
+          ✕
+        </button>
       </div>
       <div className="total">
         <div className="original">
@@ -264,7 +279,8 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               <div className="metadataItem">
                 <span>GPS :</span>
                 <span>
-                  {detailData.metadata.gpslatitude}:{detailData.metadata.gpslongitude}
+                  {detailData.metadata.gpslatitude}:
+                  {detailData.metadata.gpslongitude}
                 </span>
               </div>
             </div>
@@ -278,11 +294,8 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               blobData={blobData}
               setTransformedImageUrl={setTransformedImageUrl}
               setDownloadLink={setDownloadLink}
-              setFileExtension={setFileExtension}
+              setChangeFileExtension={setChangeFileExtension}
             />
-          </div>
-          <div className="buttonList2">
-            <button onClick={handleDownload}>다운로드</button>
           </div>
         </div>
 
@@ -313,9 +326,12 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               </div>
               <div className="metadataItem">
                 <span>확장자 :</span>
-                <span>{fileExtension}</span>
+                <span>{changeFileExtension}</span>
               </div>
             </div>
+          </div>
+          <div className="buttonList2">
+            <button onClick={handleDownload}>다운로드</button>
           </div>
         </div>
       </div>
@@ -324,7 +340,3 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
 };
 
 export default DetailModal;
-
-
-
-

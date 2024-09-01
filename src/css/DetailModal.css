@@ -92,9 +92,12 @@ h2 {
   border: none;
   background: white;
   font-weight: 700;
+  padding: 9px 21px;
   border: 1.5px solid black;
   border-radius: 10px;
   cursor: pointer;
+  margin-top: 172px;
+  display: flex;
 }
 
 .metadataItem {
