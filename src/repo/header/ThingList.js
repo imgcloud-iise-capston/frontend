@@ -60,12 +60,10 @@ const ThingList = ({ onSelectedIdsChange }) => {
 
       console.log("이미지 분류 : ", imgId);
       console.log("id 타입 : ", typeof img.thingId);
-      const getBase64 = await axios.post("/base64", {
-        params: {
-          id: img.thingId,
-          detail: imgId,
-        },
-      });
+
+      const getBase64 = await axios.post(
+        `/base64?id=${img.thingId}&detail=${imgId}`
+      );
 
       const metadata = response.data;
       const base64 = getBase64.data;

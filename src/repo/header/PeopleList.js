@@ -57,12 +57,9 @@ const PeopleList = ({ onSelectedIdsChange }) => {
 
       console.log("이미지 분류 : ", imgId);
 
-      const getBase64 = await axios.post("/base64", {
-        params: {
-          detail: imgId,
-          id: img.peopleId,
-        },
-      });
+      const getBase64 = await axios.post(
+        `/base64?id=${img.peopleId}&detail=${imgId}`
+      );
 
       const metadata = response.data;
       const base64 = getBase64.data;
