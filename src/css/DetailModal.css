@@ -88,6 +88,15 @@ h2 {
   margin-top: 50px;
 }
 
+.buttonList2 button {
+  border: none;
+  background: white;
+  font-weight: 700;
+  border: 1.5px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
 .metadataItem {
   display: flex;
   justify-content: space-between;

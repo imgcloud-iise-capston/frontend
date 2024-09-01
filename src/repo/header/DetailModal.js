@@ -2,16 +2,108 @@ import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "../../css/DetailModal.css";
 import imageCompression from "browser-image-compression";
-// import cv from "@techstark/opencv-js";
+import { jsPDF } from 'jspdf';
+
+// ImageConverter 컴포넌트 정의를 최상단으로 이동
+const ImageConverter = ({ blobData, setTransformedImageUrl, setDownloadLink, setFileExtension }) => {
+  const [convertedSizeMB, setConvertedSizeMB] = useState('');
+  const [showFormatOptions, setShowFormatOptions] = useState(false);
+
+  const handleImageTypeChange = async (type) => {
+    try {
+      let newBlob;
+
+      if (type === 'pdf') {
+        // PDF로 변환
+        const imgData = await convertBlobToDataUrl(blobData);
+        const img = new Image();
+        img.src = imgData;
+
+        img.onload = () => {
+          const pdf = new jsPDF({
+            orientation: img.width > img.height ? 'landscape' : 'portrait', // 이미지의 가로 세로 비율에 맞춰 PDF 페이지 방향 설정
+            unit: 'px',
+            format: [img.width, img.height] // PDF 페이지 크기를 이미지 크기로 설정
+          });
+
+          // PDF의 크기를 이미지의 크기와 동일하게 설정하여 이미지 전체가 포함되도록 함
+          pdf.addImage(imgData, 'JPEG', 0, 0, img.width, img.height); // 이미지 전체를 PDF에 추가
+
+          const pdfBlob = pdf.output('blob'); // PDF Blob 생성
+          newBlob = new Blob([pdfBlob], { type: 'application/pdf' });
+
+          // 파일 확장자 설정
+          setFileExtension('pdf');
+
+          const newImageUrl = URL.createObjectURL(newBlob);
+          setTransformedImageUrl(newImageUrl);
+          setDownloadLink(newImageUrl);
+        };
+
+        return; // PDF 처리 완료 후 바로 반환
+      } else {
+        // JPEG 또는 PNG로 변환
+        const newType = type === 'jpeg' ? 'image/jpeg' : 'image/png';
+        newBlob = new Blob([blobData], { type: newType });
+
+        // 파일 확장자 설정
+        setFileExtension(type === 'jpeg' ? 'jpeg' : 'png');
+      }
+
+      const newSize = newBlob.size;
+      const newSizeMB = (newSize / (1024 * 1024)).toFixed(2);
+      setConvertedSizeMB(newSizeMB);
+
+      const newImageUrl = URL.createObjectURL(newBlob);
+      setTransformedImageUrl(newImageUrl);
+
+      // 다운로드 링크 설정
+      setDownloadLink(newImageUrl);
+    } catch (error) {
+      console.error('Image conversion error:', error);
+    }
+  };
+
+  const convertBlobToDataUrl = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const handleFormatButtonClick = () => {
+    setShowFormatOptions(!showFormatOptions);
+  };
+
+  const handleFormatOptionClick = (format) => {
+    setShowFormatOptions(false);
+    handleImageTypeChange(format);
+  };
+
+  return (
+    <>
+      <button onClick={handleFormatButtonClick}>파일포맷 변환</button>
+      {showFormatOptions && (
+        <div className="formatOptions">
+          <button onClick={() => handleFormatOptionClick('jpeg')}>JPEG로 변환</button>
+          <button onClick={() => handleFormatOptionClick('png')}>PNG로 변환</button>
+          <button onClick={() => handleFormatOptionClick('pdf')}>PDF로 변환</button>
+        </div>
+      )}
+    </>
+  );
+};
 
 const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [metaScore, setMetaScore] = useState(0);
   const [fileExtension, setFileExtension] = useState("");
   const [transformedImageUrl, setTransformedImageUrl] = useState("");
+  const [downloadLink, setDownloadLink] = useState(""); // 다운로드 링크 상태 추가
   const [blobData, setBlobData] = useState(null);
   const [compressedSizeMB, setCompressedSizeMB] = useState("");
 
-  // 메타데이터 품질 점수 계산 함수
   const calculateMetaScore = (metadata) => {
     let score = 0;
 
@@ -32,7 +124,6 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       const extension = title.slice(-3).toLowerCase();
       setFileExtension(extension);
 
-      // detailData.base64를 Blob 객체로 변환
       if (detailData.base64) {
         let contentType = "";
         if (extension === "jpg") {
@@ -41,13 +132,12 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
           contentType = "image/png";
         }
         const blob = base64ToBlob(detailData.base64, contentType);
-        setBlobData(blob); // 변환된 Blob 객체를 상태에 저장
+        setBlobData(blob);
       }
     }
   }, [detailData]);
 
-  // Base64 => Blob 객체로 변환하는 함수
-  function base64ToBlob(base64, contentType = "", sliceSize = 512) {
+  const base64ToBlob = (base64, contentType = "", sliceSize = 512) => {
     const byteCharacters = atob(base64);
     const byteArrays = [];
 
@@ -63,58 +153,43 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       byteArrays.push(byteArray);
     }
 
-    const blob = new Blob(byteArrays, { type: contentType });
-    return blob;
-  }
+    return new Blob(byteArrays, { type: contentType });
+  };
 
-  //파일 품질 압축, 파일 해상도 유지, 품질 80% => 용량 줄게
   const handleCompressImage = async () => {
     const blob = blobData;
 
     const options = {
-      initialQuality: 0.8, // 품질을 80%로 설정, 해상도는 유지 (만약 해상도 줄이려면 maxWidthOrHeight 옵션 추가하면 됨)
+      initialQuality: 0.8,
       useWebWorker: true,
     };
 
     try {
       const compressedBlob = await imageCompression(blob, options);
-      const compressedSize = compressedBlob.size; //바이트 단위
-      const compressedSizeMB = (compressedSize / (1024 * 1024)).toFixed(2); // MB 단위
+      const compressedSize = compressedBlob.size;
+      const compressedSizeMB = (compressedSize / (1024 * 1024)).toFixed(2);
       setCompressedSizeMB(compressedSizeMB);
       const compressedImageUrl = URL.createObjectURL(compressedBlob);
-      setTransformedImageUrl(compressedImageUrl); // 압축된 이미지 URL을 상태에 저장
+      setTransformedImageUrl(compressedImageUrl);
+
+      // 압축된 이미지 다운로드 링크 설정
+      setDownloadLink(compressedImageUrl);
     } catch (error) {
       console.error("Image compression error:", error);
     }
   };
 
-  // //노이즈 제거
-  // const handleRemoveNoise = async () => {
-  //   if (blobData) {
-  //     const imageBitmap = await createImageBitmap(blobData);
-  //     const canvas = document.createElement("canvas");
-  //     const ctx = canvas.getContext("2d");
-
-  //     canvas.width = imageBitmap.width;
-  //     canvas.height = imageBitmap.height;
-
-  //     ctx.drawImage(imageBitmap, 0, 0);
-
-  //     let src = cv.imread(canvas);
-  //     let dst = new cv.Mat();
-  //     cv.fastNlMeansDenoisingColored(src, dst, 10, 10, 7, 21); // 노이즈 제거, 파라미터 값 변경해야할수도
-
-  //     // cv.imshow(canvas, dst); // 캔버스에 결과 이미지를 표시
-
-  //     src.delete();
-  //     dst.delete();
-
-  //     canvas.toBlob((blob) => {
-  //       const transformedUrl = URL.createObjectURL(blob);
-  //       setTransformedImageUrl(transformedUrl);
-  //     }, blobData.type);
-  //   }
-  // };
+  // 다운로드 버튼 클릭 핸들러
+  const handleDownload = () => {
+    if (downloadLink) {
+      const a = document.createElement('a'); // 동적으로 <a> 태그 생성
+      a.href = downloadLink;
+      a.download = `${detailData.imageTitle}.${fileExtension}`; // 파일명과 확장자 설정
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a); // 다운로드 후 <a> 태그 제거
+    }
+  };
 
   return (
     <Modal
@@ -124,9 +199,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     >
       <div className="modalHeader">
         <h2>상세보기</h2>
-        <button onClick={onRequestClose} className="closeButton">
-          ✕
-        </button>
+        <button onClick={onRequestClose} className="closeButton">✕</button>
       </div>
       <div className="total">
         <div className="original">
@@ -191,17 +264,25 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               <div className="metadataItem">
                 <span>GPS :</span>
                 <span>
-                  {detailData.metadata.gpslatitude}:
-                  {detailData.metadata.gpslongitude}
+                  {detailData.metadata.gpslatitude}:{detailData.metadata.gpslongitude}
                 </span>
               </div>
             </div>
           </div>
           <div className="buttonList">
             <button onClick={handleCompressImage}>압축</button>
-            <button> 노이즈 제거 </button>
-            <button> 해상도 측정 </button>
-            <button> 파일포맷 변환 </button>
+            <button>노이즈 제거</button>
+            <button>해상도 측정</button>
+            {/* ImageConverter 컴포넌트 사용 */}
+            <ImageConverter
+              blobData={blobData}
+              setTransformedImageUrl={setTransformedImageUrl}
+              setDownloadLink={setDownloadLink}
+              setFileExtension={setFileExtension}
+            />
+          </div>
+          <div className="buttonList2">
+            <button onClick={handleDownload}>다운로드</button>
           </div>
         </div>
 
@@ -243,3 +324,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
 };
 
 export default DetailModal;
+
+
+
+
