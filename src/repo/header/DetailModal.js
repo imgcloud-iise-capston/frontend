@@ -1,9 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import "../../css/DetailModal.css";
 import { Button } from "@mui/material";
 
 const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
+  const [metaScore, setMetaScore] = useState(0);
+  const [fileExtension, setFileExtension] = useState("");
+
+  // 메타데이터 품질 점수 계산 함수
+  const calculateMetaScore = (metadata) => {
+    let score = 0;
+
+    if (metadata.iso >= 100) score += 1;
+    if (metadata.fstop >= 1.0) score += 1;
+    if (metadata.whiteBalance) score += 1;
+    if (metadata.exposureTime > 0) score += 1;
+    if (metadata.resolution && metadata.resolution !== "0x0") score += 1;
+
+    return score;
+  };
+
+  useEffect(() => {
+    if (detailData && detailData.metadata) {
+      const score = calculateMetaScore(detailData.metadata);
+      setMetaScore(score);
+      const title = detailData.imageTitle[0];
+      const extension = title.slice(-3).toLowerCase();
+      setFileExtension(extension);
+    }
+  }, [detailData]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -40,11 +66,19 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               )}
               <div className="metadataItem">
                 <span>메타데이터 품질 점수 :</span>
-                <span>{detailData.metadata.metaScore}</span>
+                <span>{metaScore}</span>
               </div>
               <div className="metadataItem">
                 <span>측정한 해상도 :</span>
                 <span>{detailData.metadata.realResolution}</span>
+              </div>
+              <div className="metadataItem">
+                <span>용량 :</span>
+                <span>{detailData.metadata.size}</span>
+              </div>
+              <div className="metadataItem">
+                <span>확장자 :</span>
+                <span>{fileExtension}</span>
               </div>
             </div>
             <div className="metadataRight">
@@ -112,7 +146,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               </div>
               <div className="metadataItem">
                 <span>확장자 :</span>
-                <span></span>
+                <span>{fileExtension}</span>
               </div>
             </div>
           </div>
