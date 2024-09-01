@@ -49,11 +49,30 @@ const ThingList = ({ onSelectedIdsChange }) => {
           thingId: img.thingId,
         },
       });
+
+      let imgId;
+
+      if (img.peopleId) {
+        imgId = "people";
+      } else {
+        imgId = "thing";
+      }
+
+      console.log("이미지 분류 : ", imgId);
+      console.log("id 타입 : ", typeof img.thingId);
+      const getBase64 = await axios.post("/base64", {
+        params: {
+          id: img.thingId,
+          detail: imgId,
+        },
+      });
+
       const metadata = response.data;
+      const base64 = getBase64.data;
 
       console.log("metadata : ", metadata);
 
-      setSelectedDetail({ ...img, metadata });
+      setSelectedDetail({ ...img, metadata, base64 });
 
       setIsModalOpen(true);
     } catch (error) {
