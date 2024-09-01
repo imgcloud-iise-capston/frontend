@@ -111,6 +111,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [downloadLink, setDownloadLink] = useState("");
   const [blobData, setBlobData] = useState(null);
   const [compressedSizeMB, setCompressedSizeMB] = useState("");
+  const [showRealResolution, setShowRealResolution] = useState(false);
 
   const calculateMetaScore = (metadata) => {
     let score = 0;
@@ -225,6 +226,11 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     }
   };
 
+  //실제 해상도 계산
+  const handleShowRealResolution = () => {
+    setShowRealResolution(true);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -262,10 +268,6 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               <div className="metadataItem">
                 <span>메타데이터 품질 점수 :</span>
                 <span>{metaScore}</span>
-              </div>
-              <div className="metadataItem">
-                <span>측정한 해상도 :</span>
-                <span>{detailData.metadata.realResolution}</span>
               </div>
               <div className="metadataItem">
                 <span>용량 :</span>
@@ -309,7 +311,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
           <div className="buttonList">
             <button onClick={handleCompressImage}>압축</button>
             <button onClick={handleRemoveNoise}>노이즈 제거</button>
-            <button>해상도 측정</button>
+            <button onClick={handleShowRealResolution}>해상도 측정</button>
             <ImageConverter
               blobData={blobData}
               setTransformedImageUrl={setTransformedImageUrl}
@@ -348,6 +350,12 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
                 <span>확장자 :</span>
                 <span>{changeFileExtension}</span>
               </div>
+              {showRealResolution && (
+                <div className="metadataItem">
+                  <span>측정한 해상도 :</span>
+                  <span>{detailData.metadata.realResolution}</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="buttonList2">
