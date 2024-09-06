@@ -11,6 +11,9 @@ const ImageConverter = ({
   setTransformedImageUrl,
   setDownloadLink,
   setChangeFileExtension,
+  setTransformedFileName,
+  detailData,
+  setShowRealResolution2,
 }) => {
   const [convertedSizeMB, setConvertedSizeMB] = useState("");
   const [showFormatOptions, setShowFormatOptions] = useState(false);
@@ -18,6 +21,10 @@ const ImageConverter = ({
   const handleImageTypeChange = async (type) => {
     try {
       let newBlob;
+      const originalFileName = detailData.imageTitle[0] || "image"; // blobData에 파일 이름이 포함되어 있지 않다면 기본 이름 사용
+      const fileNameWithoutExtension =
+        originalFileName.substring(0, originalFileName.lastIndexOf(".")) ||
+        originalFileName;
 
       if (type === "pdf") {
         // PDF로 변환
@@ -33,15 +40,15 @@ const ImageConverter = ({
           });
 
           pdf.addImage(imgData, "JPEG", 0, 0, img.width, img.height); // 이미지 전체를 PDF에 추가
-
           const pdfBlob = pdf.output("blob");
           newBlob = new Blob([pdfBlob], { type: "application/pdf" });
 
-          setChangeFileExtension("pdf");
-
+          const newFileName = `${fileNameWithoutExtension}.pdf`;
+          setTransformedFileName(newFileName);
           const newImageUrl = URL.createObjectURL(newBlob);
           setTransformedImageUrl(newImageUrl);
           setDownloadLink(newImageUrl);
+          setChangeFileExtension("pdf");
         };
 
         return;
@@ -50,16 +57,17 @@ const ImageConverter = ({
         const newType = type === "jpeg" ? "image/jpeg" : "image/png";
         newBlob = new Blob([blobData], { type: newType });
 
-        setChangeFileExtension(type === "jpeg" ? "jpeg" : "png");
+        const newFileName = `${fileNameWithoutExtension}.${type}`;
+        setTransformedFileName(newFileName);
+        const newSize = newBlob.size;
+        const newSizeMB = (newSize / (1024 * 1024)).toFixed(2);
+        setConvertedSizeMB(newSizeMB);
+
+        const newImageUrl = URL.createObjectURL(newBlob);
+        setTransformedImageUrl(newImageUrl);
+        setDownloadLink(newImageUrl);
+        setChangeFileExtension(type);
       }
-
-      const newSize = newBlob.size;
-      const newSizeMB = (newSize / (1024 * 1024)).toFixed(2);
-      setConvertedSizeMB(newSizeMB);
-
-      const newImageUrl = URL.createObjectURL(newBlob);
-      setTransformedImageUrl(newImageUrl);
-      setDownloadLink(newImageUrl);
     } catch (error) {
       console.error("Image conversion error:", error);
     }
@@ -80,6 +88,7 @@ const ImageConverter = ({
 
   const handleFormatOptionClick = (format) => {
     setShowFormatOptions(false);
+    setShowRealResolution2(false);
     handleImageTypeChange(format);
   };
 
@@ -112,6 +121,8 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [blobData, setBlobData] = useState(null);
   const [compressedSizeMB, setCompressedSizeMB] = useState("");
   const [showRealResolution, setShowRealResolution] = useState(false);
+  const [showRealResolution2, setShowRealResolution2] = useState(false);
+  const [transformedFileName, setTransformedFileName] = useState(""); // 오른쪽 파일 이름
 
   const calculateMetaScore = (metadata) => {
     let score = 0;
@@ -130,13 +141,20 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       const score = calculateMetaScore(detailData.metadata);
       setMetaScore(score);
       const title = detailData.imageTitle[0];
-      const extension = title.slice(-3).toLowerCase();
-      setFileExtension(extension);
+
+      let extension = title.slice(-4).toLowerCase(); // 먼저 4자리를 추출
+      if (extension === "jpeg") {
+        setFileExtension("jpeg");
+      } else {
+        extension = title.slice(-3).toLowerCase(); // 그 외의 경우, 3자리 추출
+        setFileExtension(extension);
+      }
+
       setChangeFileExtension(extension);
 
       if (detailData.base64) {
         let contentType = "";
-        if (extension === "jpg") {
+        if (extension === "jpg" || extension === "jpeg") {
           contentType = "image/jpeg";
         } else if (extension === "png") {
           contentType = "image/png";
@@ -167,6 +185,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   };
 
   const handleCompressImage = async () => {
+    setShowRealResolution2(false);
     const blob = blobData;
 
     const options = {
@@ -181,6 +200,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       setCompressedSizeMB(compressedSizeMB);
       const compressedImageUrl = URL.createObjectURL(compressedBlob);
       setTransformedImageUrl(compressedImageUrl);
+      setTransformedFileName(detailData.imageTitle);
 
       setDownloadLink(compressedImageUrl);
     } catch (error) {
@@ -189,10 +209,16 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   };
 
   const handleDownload = () => {
-    if (downloadLink) {
+    if (downloadLink && detailData.imageTitle) {
+      const originalFileName = detailData.imageTitle[0];
+      const fileNameWithoutExtension =
+        originalFileName.substring(0, originalFileName.lastIndexOf(".")) ||
+        originalFileName;
+      const newFileName = `${fileNameWithoutExtension}.${changeFileExtension}`; // 새 확장자를 적용한 파일 이름 생성
+
       const a = document.createElement("a");
       a.href = downloadLink;
-      a.download = `${detailData.imageTitle}.${changeFileExtension}`;
+      a.download = newFileName; // 수정된 파일 이름 사용
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -200,6 +226,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   };
 
   const handleRemoveNoise = () => {
+    setShowRealResolution2(false);
     if (blobData) {
       const img = new Image();
       const url = URL.createObjectURL(blobData);
@@ -223,12 +250,18 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
           setDownloadLink(transformedUrl);
         }, blobData.type);
       };
+      setTransformedFileName(detailData.imageTitle);
     }
   };
 
   //실제 해상도 계산
   const handleShowRealResolution = () => {
     setShowRealResolution(true);
+  };
+
+  //실제 해상도 계산 (오른쪽)
+  const handleShowRealResolution2 = () => {
+    setShowRealResolution2(true);
   };
 
   return (
@@ -277,6 +310,12 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
                 <span>확장자 :</span>
                 <span>{fileExtension}</span>
               </div>
+              {showRealResolution && (
+                <div className="metadataItem">
+                  <span>측정한 해상도 :</span>
+                  <span>{detailData.metadata.realResolution}</span>
+                </div>
+              )}
             </div>
             <div className="metadataRight">
               <div className="metadataItem">
@@ -317,6 +356,9 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               setTransformedImageUrl={setTransformedImageUrl}
               setDownloadLink={setDownloadLink}
               setChangeFileExtension={setChangeFileExtension}
+              setTransformedFileName={setTransformedFileName}
+              detailData={detailData}
+              setShowRealResolution2={setShowRealResolution2}
             />
           </div>
         </div>
@@ -330,7 +372,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
                   alt="Transformed"
                   className="detailImg"
                 />
-                <p className="imgTitle">파일명 : {detailData.imageTitle}</p>
+                <p className="imgTitle">파일명 : {transformedFileName}</p>
               </>
             )}
           </div>
@@ -350,7 +392,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
                 <span>확장자 :</span>
                 <span>{changeFileExtension}</span>
               </div>
-              {showRealResolution && (
+              {transformedImageUrl && showRealResolution2 && (
                 <div className="metadataItem">
                   <span>측정한 해상도 :</span>
                   <span>{detailData.metadata.realResolution}</span>
@@ -359,7 +401,15 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
             </div>
           </div>
           <div className="buttonList2">
-            <button onClick={handleDownload}>다운로드</button>
+            <button onClick={handleDownload} disabled={!transformedImageUrl}>
+              다운로드
+            </button>
+            <button
+              onClick={handleShowRealResolution2}
+              disabled={!transformedImageUrl}
+            >
+              해상도 측정
+            </button>
           </div>
         </div>
       </div>

@@ -73,6 +73,12 @@ h2 {
   display: flex;
   justify-content: space-around;
 }
+
+.transformed .buttonList2 {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
 .imgTitle {
   padding-top: 2%;
 }
@@ -96,8 +102,7 @@ h2 {
   border: 1.5px solid black;
   border-radius: 10px;
   cursor: pointer;
-  margin-top: 142px;
-  display: flex;
+  margin-top: 110px;
 }
 
 .metadataItem {
