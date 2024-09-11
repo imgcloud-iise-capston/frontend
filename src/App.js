@@ -6,13 +6,15 @@ import NaverRedirectPage from "./login/NaverRedirectPage";
 import Login from "./login/Login";
 import MainRepo from "./repo/MainRepo";
 import ContRepo from "./repo/ContRepo";
+import Main from "./mainPage/Main";
 
 const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />}></Route>
+          <Route path="/" element={<Main />}></Route>
+          <Route path="/login" element={<Login />}></Route>
           <Route
             path="/oauth/redirected/kakao"
             element={<KakaoRedirectPage />}
