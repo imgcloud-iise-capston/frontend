@@ -65,12 +65,12 @@ const Main = () => {
             <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
               <li className="nav-item">
                 <a className="nav-link me-lg-3" href="#features">
-                  서비스 소개
+                  About
                 </a>
               </li>
               <li className="nav-item">
                 <a className="nav-link me-lg-3" href="#download">
-                  요금안내
+                  Cost Plan
                 </a>
               </li>
             </ul>
@@ -97,7 +97,7 @@ const Main = () => {
               {/* Mashead text and app badges*/}
               <div className="mb-5 mb-lg-0 text-center text-lg-start">
                 <h1 className="display-1 lh-1 mb-3">
-                  Showcase your app beautifully.
+                  Manage your photos easily.
                 </h1>
                 <p className="lead fw-normal text-muted mb-5">
                   Launch your mobile app landing page faster with this free,

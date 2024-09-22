@@ -155,8 +155,19 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
 
         const formData = new FormData();
         formData.append("image", image);
-        formData.append("fileType", fileExtension);
-        formData.append("imgId", detailData.peopleId);
+
+        formData.append(
+          "fileType",
+          new Blob([JSON.stringify(fileExtension)], {
+            type: "application/json",
+          })
+        );
+        formData.append(
+          "imageId",
+          new Blob([JSON.stringify(detailData.peopleId)], {
+            type: "application/json",
+          })
+        );
 
         const response = await axios.post(
           "http://localhost:8080/calculate/transformed/person",
