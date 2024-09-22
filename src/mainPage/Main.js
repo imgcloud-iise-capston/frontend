@@ -1,7 +1,13 @@
 import React from "react";
 import "../css/styles.css";
+import { Link, useNavigate } from "react-router-dom";
 
 const Main = () => {
+  const navigate = useNavigate();
+
+  const moveLogin = () => {
+    navigate("/login");
+  };
   return (
     <>
       <meta charSet="utf-8" />
@@ -41,7 +47,7 @@ const Main = () => {
       >
         <div className="container px-5">
           <a className="navbar-brand fw-bold" href="#page-top">
-            Start Bootstrap
+            Img Cloud
           </a>
           <button
             className="navbar-toggler"
@@ -59,12 +65,12 @@ const Main = () => {
             <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
               <li className="nav-item">
                 <a className="nav-link me-lg-3" href="#features">
-                  Features
+                  서비스 소개
                 </a>
               </li>
               <li className="nav-item">
                 <a className="nav-link me-lg-3" href="#download">
-                  Download
+                  요금안내
                 </a>
               </li>
             </ul>
@@ -75,7 +81,9 @@ const Main = () => {
             >
               <span className="d-flex align-items-center">
                 <i className="bi-chat-text-fill me-2" />
-                <span className="small">Send Feedback</span>
+                <span className="small" onClick={moveLogin}>
+                  Get Started
+                </span>
               </span>
             </button>
           </div>

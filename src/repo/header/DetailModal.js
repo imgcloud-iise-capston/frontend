@@ -3,7 +3,8 @@ import Modal from "react-modal";
 import "../../css/DetailModal.css";
 import imageCompression from "browser-image-compression";
 import { jsPDF } from "jspdf";
-import { canvasRGBA } from "stackblur-canvas"; // 필요한 함수만 가져옴
+import { canvasRGBA } from "stackblur-canvas";
+import axios from "axios";
 
 // ImageConverter 컴포넌트 정의
 const ImageConverter = ({
@@ -14,6 +15,7 @@ const ImageConverter = ({
   setTransformedFileName,
   detailData,
   setShowRealResolution2,
+  setShowBrisque,
 }) => {
   const [convertedSizeMB, setConvertedSizeMB] = useState("");
   const [showFormatOptions, setShowFormatOptions] = useState(false);
@@ -89,6 +91,7 @@ const ImageConverter = ({
   const handleFormatOptionClick = (format) => {
     setShowFormatOptions(false);
     setShowRealResolution2(false);
+    setShowBrisque(false);
     handleImageTypeChange(format);
   };
 
@@ -122,7 +125,89 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [compressedSizeMB, setCompressedSizeMB] = useState("");
   const [showRealResolution, setShowRealResolution] = useState(false);
   const [showRealResolution2, setShowRealResolution2] = useState(false);
+  const [showBrisque, setShowBrsique] = useState(false);
   const [transformedFileName, setTransformedFileName] = useState(""); // 오른쪽 파일 이름
+  const [transfomedBrisque, setTransformedBrisque] = useState(0);
+
+  const fileFromUrl = async (url, filename) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: blob.type });
+      return file;
+    } catch (error) {
+      console.error("Error creating file from URL:", error);
+      return null;
+    }
+  };
+
+  const calculateBrisque = async () => {
+    if (detailData.peopleId) {
+      console.log("people입니다.");
+      try {
+        const image = await fileFromUrl(
+          transformedImageUrl,
+          detailData.imageTitle[0]
+        );
+        if (!image) {
+          throw new Error("Failed to create file from URL");
+        }
+
+        const formData = new FormData();
+        formData.append("image", image);
+        formData.append("fileType", fileExtension);
+        formData.append("imgId", detailData.peopleId);
+
+        const response = await axios.post(
+          "http://localhost:8080/calculate/transformed/person",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        const score = response.data;
+        setTransformedBrisque(score);
+        console.log("transfomed score", score);
+        setShowBrsique(true);
+      } catch (error) {
+        console.error("Error calculating transformed function:", error);
+      }
+    } else {
+      //thing Img brisque 계산
+      try {
+        const image = await fileFromUrl(
+          transformedImageUrl,
+          detailData.imageTitle[0]
+        );
+        if (!image) {
+          throw new Error("Failed to create file from URL");
+        }
+
+        const formData = new FormData();
+        formData.append("image", image);
+
+        const response = await axios.post(
+          "http://localhost:8080/calculate/transformed/thing",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        const score = response.data;
+        setTransformedBrisque(score);
+        console.log("transfomed score", score);
+        setShowBrsique(true);
+      } catch (error) {
+        console.error("Error calculating transformed function:", error);
+      }
+    }
+  };
 
   const calculateMetaScore = (metadata) => {
     let score = 0;
@@ -186,6 +271,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
 
   const handleCompressImage = async () => {
     setShowRealResolution2(false);
+    setShowBrsique(false);
     const blob = blobData;
 
     const options = {
@@ -227,6 +313,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
 
   const handleRemoveNoise = () => {
     setShowRealResolution2(false);
+    setShowBrsique(false);
     if (blobData) {
       const img = new Image();
       const url = URL.createObjectURL(blobData);
@@ -359,6 +446,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               setTransformedFileName={setTransformedFileName}
               detailData={detailData}
               setShowRealResolution2={setShowRealResolution2}
+              setShowBrisque={setShowBrsique}
             />
           </div>
         </div>
@@ -378,10 +466,10 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
           </div>
           <div className="transformedMetadata">
             <div className="metadataLeft">
-              {detailData && (
+              {transformedImageUrl && showBrisque && (
                 <div className="metadataItem">
                   <span>BRISQUE 품질 점수:</span>
-                  <span>{detailData.brisqueScore}</span>
+                  <span>{transfomedBrisque}</span>
                 </div>
               )}
               <div className="metadataItem">
@@ -403,6 +491,9 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
           <div className="buttonList2">
             <button onClick={handleDownload} disabled={!transformedImageUrl}>
               다운로드
+            </button>
+            <button onClick={calculateBrisque} disabled={!transformedImageUrl}>
+              Brisque 품질 점수 계산
             </button>
             <button
               onClick={handleShowRealResolution2}

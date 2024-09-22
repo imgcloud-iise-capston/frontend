@@ -12,7 +12,7 @@ const Header = ({ theme }) => {
     try {
       await axios.post("/logout");
       localStorage.clear();
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
