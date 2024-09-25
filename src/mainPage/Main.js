@@ -371,7 +371,7 @@ const Main = () => {
         </div>
       </section>
       {/* Call to action section*/}
-      <section className="cta">
+      <section className="cta" id="download">
         <div className="cta-content">
           <div className="container px-5">
             <h2 className="text-white display-1 lh-1 mb-4">
@@ -390,36 +390,12 @@ const Main = () => {
         </div>
       </section>
       {/* App badge section*/}
-      <section className="bg-gradient-primary-to-secondary" id="download">
-        <div className="container px-5">
-          <h2 className="text-center text-white font-alt mb-4">
-            Get the app now!
-          </h2>
-          <div className="d-flex flex-column flex-lg-row align-items-center justify-content-center">
-            <a className="me-lg-3 mb-4 mb-lg-0" href="#!">
-              <img
-                className="app-badge"
-                src="img/google-play-badge.svg"
-                alt="..."
-              />
-            </a>
-            <a href="#!">
-              <img
-                className="app-badge"
-                src="img/app-store-badge.svg"
-                alt="..."
-              />
-            </a>
-          </div>
-        </div>
-      </section>
+
       {/* Footer*/}
       <footer className="bg-black text-center py-5">
         <div className="container px-5">
           <div className="text-white-50 small">
-            <div className="mb-2">
-              © Your Website 2023. All Rights Reserved.
-            </div>
+            <div className="mb-2">© ImgCloud 2024. All Rights Reserved.</div>
             <a href="#!">Privacy</a>
             <span className="mx-1">·</span>
             <a href="#!">Terms</a>
