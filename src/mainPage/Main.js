@@ -181,14 +181,12 @@ const Main = () => {
                       {/* * * This can be a video, image, or just about anything else.*/}
                       {/* * * Set the max width of your media to 100% and the height to*/}
                       {/* * * 100% like the demo example below.*/}
-                      <video
-                        muted="muted"
-                        autoPlay=""
-                        loop=""
-                        style={{ maxWidth: "100%", height: "100%" }}
-                      >
-                        <source src="img/demo-screen.mp4" type="video/mp4" />
-                      </video>
+                      <img
+                        // muted, autoPlay, loop 속성은 이미지에는 적용되지 않으므로 주석 처리.
+                        src="img/mainBurst2.jpg" // img/mainBurst2를 이미지 경로로 지정
+                        alt="Main Burst Image" // 접근성을 위한 alt 텍스트 추가
+                        style={{ maxWidth: "100%", height: "100%" }} // 이미지 스타일 적용
+                      />
                     </div>
                   </div>
                 </div>
@@ -327,19 +325,17 @@ const Main = () => {
                     data-color="black"
                   >
                     <div className="screen bg-black">
-                      {/* PUT CONTENTS HERE:*/}
-                      {/* * * This can be a video, image, or just about anything else.*/}
-                      {/* * * Set the max width of your media to 100% and the height to*/}
-                      {/* * * 100% like the demo example below.*/}
-                      <video
-                        muted="muted"
-                        autoPlay=""
-                        loop=""
-                        style={{ maxWidth: "100%", height: "100%" }}
-                      >
-                        <source src="img/demo-screen.mp4" type="video/mp4" />
-                      </video>
-                    </div>
+                                         {/* PUT CONTENTS HERE:*/}
+                                          {/* * * This can be a video, image, or just about anything else.*/}
+                                          {/* * * Set the max width of your media to 100% and the height to*/}
+                                          {/* * * 100% like the demo example below.*/}
+                                          <img
+                                            // muted, autoPlay, loop 속성은 이미지에는 적용되지 않으므로 주석 처리.
+                                            src="img/mainBurst2.jpg" // img/mainBurst2를 이미지 경로로 지정
+                                            alt="Main Burst Image" // 접근성을 위한 alt 텍스트 추가
+                                            style={{ maxWidth: "100%", height: "100%" }} // 이미지 스타일 적용
+                                          />
+                                        </div>
                   </div>
                 </div>
               </div>
