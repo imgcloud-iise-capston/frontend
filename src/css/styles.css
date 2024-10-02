@@ -8085,6 +8085,7 @@ fieldset:disabled .btn {
   padding-left: 3rem !important;
 }
 
+
 .py-0 {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -11296,10 +11297,12 @@ section {
 
 section.cta {
   position: relative;
-  padding: 15rem 0;
+  padding: 5rem 0;
   background-image: url("https://source.unsplash.com/5g41N3uRPf8/1500x800");
   background-position: center;
   background-size: cover;
+  justify-content: center;
+  align-items: center;
 }
 section.cta .cta-content {
   position: relative;
@@ -11472,6 +11475,35 @@ footer a:focus {
 .masthead .masthead-device-mockup .device-wrapper {
   max-width: 10rem;
 }
+
+.costPlan {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centerCost {
+  background-color: white;
+  width: 300px;
+  height: 600px;
+  margin: 0px 10px;
+}
+
+.leftCost,
+.rightCost {
+  background-color: white;
+  width: 300px;
+  height: 500px;
+  margin: 0px 10px;
+}
+
+.costName {
+  padding: 30px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #6610f2;
+}
+
 @media (min-width: 576px) {
   .masthead .masthead-device-mockup .circle {
     width: 70%;

@@ -103,7 +103,7 @@ const Main = () => {
                   Launch your mobile app landing page faster with this free,
                   open source theme from Start Bootstrap!
                 </p>
-                <div className="d-flex flex-column flex-lg-row align-items-center">
+                {/* <div className="d-flex flex-column flex-lg-row align-items-center">
                   <a className="me-lg-3 mb-4 mb-lg-0" href="#!">
                     <img
                       className="app-badge"
@@ -118,7 +118,7 @@ const Main = () => {
                       alt="..."
                     />
                   </a>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="col-lg-6">
@@ -201,11 +201,12 @@ const Main = () => {
           <div className="row gx-5 justify-content-center">
             <div className="col-xl-8">
               <div className="h2 fs-1 text-white mb-4">
-                "An intuitive solution to a common problem that we all face,
-                wrapped up in a single app!"
+                "An intuitive platform that simplifies image quality assessment,
+                format conversion, and enhancement — all in one seamless
+                experience!"
               </div>
               <img
-                src="img/tnw-logo.svg"
+                src="img/imgcloud_whitelogo.png"
                 alt="..."
                 style={{ height: "3rem" }}
               />
@@ -223,22 +224,22 @@ const Main = () => {
                   <div className="col-md-6 mb-5">
                     {/* Feature item*/}
                     <div className="text-center">
-                      <i className="bi-phone icon-feature text-gradient d-block mb-3" />
-                      <h3 className="font-alt">Device Mockups</h3>
+                      <i className="bi-image icon-feature text-gradient d-block mb-3" />
+                      <h3 className="font-alt">Choose Best Shot</h3>
                       <p className="text-muted mb-0">
-                        Ready to use HTML/CSS device mockups, no Photoshop
-                        required!
+                        Explore our photo quality assessment tool and choose
+                        your best shot with confidence.
                       </p>
                     </div>
                   </div>
                   <div className="col-md-6 mb-5">
                     {/* Feature item*/}
                     <div className="text-center">
-                      <i className="bi-camera icon-feature text-gradient d-block mb-3" />
-                      <h3 className="font-alt">Flexible Use</h3>
+                      <i className="bi-tools icon-feature text-gradient d-block mb-3" />
+                      <h3 className="font-alt">Additional Functions</h3>
                       <p className="text-muted mb-0">
-                        Put an image, video, animation, or anything else in the
-                        screen!
+                        You can convert your file format, compress files without
+                        quality loss, and remove noise.
                       </p>
                     </div>
                   </div>
@@ -248,10 +249,9 @@ const Main = () => {
                     {/* Feature item*/}
                     <div className="text-center">
                       <i className="bi-gift icon-feature text-gradient d-block mb-3" />
-                      <h3 className="font-alt">Free to Use</h3>
+                      <h3 className="font-alt">Choose your Plan</h3>
                       <p className="text-muted mb-0">
-                        As always, this theme is free to download and use for
-                        any purpose!
+                        Choose the plan that's right for you. We have 3 plans.
                       </p>
                     </div>
                   </div>
@@ -261,8 +261,8 @@ const Main = () => {
                       <i className="bi-patch-check icon-feature text-gradient d-block mb-3" />
                       <h3 className="font-alt">Open Source</h3>
                       <p className="text-muted mb-0">
-                        Since this theme is MIT licensed, you can use it
-                        commercially!
+                        OpenCV and BRISQUE were used to measure image quality
+                        scores.
                       </p>
                     </div>
                   </div>
@@ -325,17 +325,17 @@ const Main = () => {
                     data-color="black"
                   >
                     <div className="screen bg-black">
-                                         {/* PUT CONTENTS HERE:*/}
-                                          {/* * * This can be a video, image, or just about anything else.*/}
-                                          {/* * * Set the max width of your media to 100% and the height to*/}
-                                          {/* * * 100% like the demo example below.*/}
-                                          <img
-                                            // muted, autoPlay, loop 속성은 이미지에는 적용되지 않으므로 주석 처리.
-                                            src="img/mainBurst2.jpg" // img/mainBurst2를 이미지 경로로 지정
-                                            alt="Main Burst Image" // 접근성을 위한 alt 텍스트 추가
-                                            style={{ maxWidth: "100%", height: "100%" }} // 이미지 스타일 적용
-                                          />
-                                        </div>
+                      {/* PUT CONTENTS HERE:*/}
+                      {/* * * This can be a video, image, or just about anything else.*/}
+                      {/* * * Set the max width of your media to 100% and the height to*/}
+                      {/* * * 100% like the demo example below.*/}
+                      <img
+                        // muted, autoPlay, loop 속성은 이미지에는 적용되지 않으므로 주석 처리.
+                        src="img/mainBurst2.jpg" // img/mainBurst2를 이미지 경로로 지정
+                        alt="Main Burst Image" // 접근성을 위한 alt 텍스트 추가
+                        style={{ maxWidth: "100%", height: "100%" }} // 이미지 스타일 적용
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -373,19 +373,16 @@ const Main = () => {
       {/* Call to action section*/}
       <section className="cta" id="download">
         <div className="cta-content">
-          <div className="container px-5">
-            <h2 className="text-white display-1 lh-1 mb-4">
-              Stop waiting.
-              <br />
-              Start building.
-            </h2>
-            <a
-              className="btn btn-outline-light py-3 px-4 rounded-pill"
-              href="https://startbootstrap.com/theme/new-age"
-              target="_blank"
-            >
-              Download for free
-            </a>
+          <div className="container costPlan">
+            <div className="leftCost">
+              <div className="costName">Starter</div>
+            </div>
+            <div className="centerCost">
+              <div className="costName">Basic</div>
+            </div>
+            <div className="rightCost">
+              <div className="costName">Pro</div>
+            </div>
           </div>
         </div>
       </section>
