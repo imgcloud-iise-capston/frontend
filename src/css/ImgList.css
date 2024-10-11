@@ -1,18 +1,11 @@
 .list {
   display: flex;
   flex-direction: column;
-  padding: 0px px; /* Matching padding with RepoNavi */
 }
 
 .sort {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 5px 0;
-}
-
-.blank {
-  width: 70px;
 }
 
 .filename {
@@ -31,8 +24,20 @@
 
 .list .blank {
   display: flex;
-  width: 70px;
-  gap: 10px;
-  height: 70px;
   object-fit: cover;
+  padding: 0; /* padding 제거 */
+  margin: 0; /* 빈칸 없애기 위해 margin 제거 */
+}
+
+.checkBox {
+  display: flex;
+  align-items: center;
+  padding-right: 15px;
+}
+
+.sort2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 15px;
 }

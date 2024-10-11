@@ -21,7 +21,7 @@ const ContThingRepo = () => {
   return (
     <div style={style}>
       <ContRepoNavi
-        repoName="풍경 및 사물 연속사진"
+        repoName="전체 영역 품질 분석"
         repoType="contThing"
         selectedFiles={selectedFiles}
       />

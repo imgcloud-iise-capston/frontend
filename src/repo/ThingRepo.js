@@ -5,10 +5,11 @@ import ThingList from "./header/ThingList";
 import axios from "axios";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { Card, CardContent } from "@mui/material";
 
 const ThingRepo = () => {
   const style = {
-    width: "50%",
+    width: "40%",
     height: "95vh",
     padding: "15px 0px",
     boxSizing: "border-box",
@@ -92,17 +93,27 @@ const ThingRepo = () => {
   };
 
   return (
-    <div style={style}>
-      <RepoNavi
-        repoName="풍경 및 사물"
-        repoType="thing"
-        onDeleteClick={handleDeleteClick}
-        onDownloadClick={handleDownloadClick}
-        onZipDownloadClick={handleZipDownloadClick}
-      />
-      <Sort />
-      <ThingList onSelectedIdsChange={handleSelectedIdsChange} />
-    </div>
+    <Card
+      sx={{
+        width: "45%",
+        height: "85vh",
+        padding: "15px 0px",
+        margin: "20px auto",
+        boxShadow: 3,
+      }}
+    >
+      <CardContent>
+        <RepoNavi
+          repoName="전체 영역"
+          repoType="thing"
+          onDeleteClick={handleDeleteClick}
+          onDownloadClick={handleDownloadClick}
+          onZipDownloadClick={handleZipDownloadClick}
+        />
+        <Sort />
+        <ThingList onSelectedIdsChange={handleSelectedIdsChange} />
+      </CardContent>
+    </Card>
   );
 };
 

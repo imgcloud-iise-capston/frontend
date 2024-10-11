@@ -5,6 +5,7 @@ import Sort from "./header/Sort";
 import axios from "axios";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { Card, CardContent } from "@mui/material";
 
 const PeopleRepo = () => {
   const style = {
@@ -48,19 +49,23 @@ const PeopleRepo = () => {
       );
       const imageUrls = response.data;
 
-      imageUrls.forEach((url, index) => {
-        fetch(url, { mode: "no-cors" })
-          .then((res) => res.blob())
-          .then((blob) => {
-            const blobURL = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = blobURL;
-            link.download = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          })
-          .catch((e) => console.error(e));
+      // imageUrls에서 각 URL을 가져와 다운로드
+      imageUrls.forEach(async (url, index) => {
+        try {
+          const res = await axios.get(url, {
+            responseType: "blob", // blob으로 응답을 받아옴
+          });
+
+          const blobURL = URL.createObjectURL(res.data);
+          const link = document.createElement("a");
+          link.href = blobURL;
+          link.download = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (e) {
+          console.error("이미지 다운로드 중 오류 발생", e);
+        }
       });
     } catch (error) {
       console.error("이미지 다운로드 중 오류 발생", error);
@@ -93,17 +98,27 @@ const PeopleRepo = () => {
   };
 
   return (
-    <div style={style}>
-      <RepoNavi
-        repoName="인물"
-        repoType="people"
-        onDeleteClick={handleDeleteClick}
-        onDownloadClick={handleDownloadClick}
-        onZipDownloadClick={handleZipDownloadClick}
-      />
-      <Sort />
-      <PeopleList onSelectedIdsChange={handleSelectedIdsChange} />
-    </div>
+    <Card
+      sx={{
+        width: "45%",
+        height: "85vh",
+        padding: "15px 0px",
+        margin: "20px auto",
+        boxShadow: 3,
+      }}
+    >
+      <CardContent>
+        <RepoNavi
+          repoName="특정 영역"
+          repoType="people"
+          onDeleteClick={handleDeleteClick}
+          onDownloadClick={handleDownloadClick}
+          onZipDownloadClick={handleZipDownloadClick}
+        />
+        <Sort />
+        <PeopleList onSelectedIdsChange={handleSelectedIdsChange} />
+      </CardContent>
+    </Card>
   );
 };
 

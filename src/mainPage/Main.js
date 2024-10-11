@@ -103,22 +103,6 @@ const Main = () => {
                   Launch your mobile app landing page faster with this free,
                   open source theme from Start Bootstrap!
                 </p>
-                {/* <div className="d-flex flex-column flex-lg-row align-items-center">
-                  <a className="me-lg-3 mb-4 mb-lg-0" href="#!">
-                    <img
-                      className="app-badge"
-                      src="img/google-play-badge.svg"
-                      alt="..."
-                    />
-                  </a>
-                  <a href="#!">
-                    <img
-                      className="app-badge"
-                      src="img/app-store-badge.svg"
-                      alt="..."
-                    />
-                  </a>
-                </div> */}
               </div>
             </div>
             <div className="col-lg-6">

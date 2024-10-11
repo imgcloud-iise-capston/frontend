@@ -21,7 +21,7 @@ const ContPeopleRepo = () => {
   return (
     <div style={style}>
       <ContRepoNavi
-        repoName="인물 연속사진"
+        repoName="특정 영역 품질 분석"
         repoType="contPeople"
         selectedFiles={selectedFiles}
       />
