@@ -48,6 +48,7 @@ const PeopleRepo = () => {
         selectedIds
       );
       const imageUrls = response.data;
+      console.log("AAAA!!!!" + imageUrls);
 
       // imageUrls에서 각 URL을 가져와 다운로드
       imageUrls.forEach(async (url, index) => {
@@ -83,8 +84,10 @@ const PeopleRepo = () => {
 
       const zip = new JSZip();
       const promises = imageUrls.map(async (url, index) => {
-        const response = await fetch(url, { mode: "no-cors" });
-        const blob = await response.blob();
+        const res = await axios.get(url, {
+          responseType: "blob", // blob으로 응답을 받아옴
+        });
+        const blob = res.data;
         const fileName = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
         zip.file(fileName, blob);
       });

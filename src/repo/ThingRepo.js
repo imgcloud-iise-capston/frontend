@@ -47,20 +47,25 @@ const ThingRepo = () => {
         selectedIds
       );
       const imageUrls = response.data;
+      console.log("AAAA!!!!" + imageUrls);
 
-      imageUrls.forEach((url, index) => {
-        fetch(url, { mode: "no-cors" })
-          .then((res) => res.blob())
-          .then((blob) => {
-            const blobURL = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = blobURL;
-            link.download = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          })
-          .catch((e) => console.error(e));
+      // imageUrls에서 각 URL을 가져와 다운로드
+      imageUrls.forEach(async (url, index) => {
+        try {
+          const res = await axios.get(url, {
+            responseType: "blob", // blob으로 응답을 받아옴
+          });
+
+          const blobURL = URL.createObjectURL(res.data);
+          const link = document.createElement("a");
+          link.href = blobURL;
+          link.download = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } catch (e) {
+          console.error("이미지 다운로드 중 오류 발생", e);
+        }
       });
     } catch (error) {
       console.error("이미지 다운로드 중 오류 발생", error);
@@ -78,8 +83,10 @@ const ThingRepo = () => {
 
       const zip = new JSZip();
       const promises = imageUrls.map(async (url, index) => {
-        const response = await fetch(url, { mode: "no-cors" });
-        const blob = await response.blob();
+        const res = await axios.get(url, {
+          responseType: "blob", // blob으로 응답을 받아옴
+        });
+        const blob = res.data;
         const fileName = selectedFiles[index].imageTitle; // 파일명으로 imageTitle 사용
         zip.file(fileName, blob);
       });
@@ -91,7 +98,6 @@ const ThingRepo = () => {
       console.error("이미지 압축 중 오류 발생", error);
     }
   };
-
   return (
     <Card
       sx={{
