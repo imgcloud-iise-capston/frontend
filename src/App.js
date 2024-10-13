@@ -6,6 +6,7 @@ import NaverRedirectPage from "./login/NaverRedirectPage";
 import Login from "./login/Login";
 import MainRepo from "./repo/MainRepo";
 import ContRepo from "./repo/ContRepo";
+import FunctionExplainRepo from "./repo/FunctionExplainRepo";
 import Main from "./mainPage/Main";
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
           ></Route>
           <Route path="/mainRepo" element={<MainRepo />}></Route>
           <Route path="/contRepo" element={<ContRepo />}></Route>
+          <Route path="/FunctionExplainRepo" element={<FunctionExplainRepo />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

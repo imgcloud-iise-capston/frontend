@@ -35,6 +35,10 @@ const SideBar = () => {
           <i className="fas fa-fw fa-tachometer-alt"></i>
           <span>Storage</span>
         </Link>
+        <Link className="nav-link" to="/FunctionExplainRepo">
+           <i className="fas fa-fw fa-tachometer-alt"></i>
+           <span>기능 설명</span>
+        </Link>
       </li>
 
       {/* Divider */}
@@ -57,11 +61,7 @@ const SideBar = () => {
       </li>
 
       {/* Nav Item - Utilities Collapse Menu */}
-      <li className="nav-item">
-        <a className="nav-link collapsed" href="#">
-          <span>기능 설명</span>
-        </a>
-      </li>
+
     </ul>
   );
 };

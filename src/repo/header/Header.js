@@ -27,7 +27,7 @@ const Header = ({ theme }) => {
     try {
       await axios.post("/logout");
       localStorage.clear();
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -37,8 +37,9 @@ const Header = ({ theme }) => {
   return (
     <div className="header">
       <div className="h4 mb-0 text-gray-800">
-        {theme === "cont" ? "Image Upload" : "Storage"}
+        {theme === "cont" ? "Image Upload" : theme === "function" ? "기능 설명" : "Storage"}
       </div>
+
       <div className="userInfo">
         <div>{localStorage.getItem("nickname")}</div>
         <IconButton onClick={handleMenuOpen}>
