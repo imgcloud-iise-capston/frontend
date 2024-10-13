@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../css/styles.css";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Menu, MenuItem, Button } from "@mui/material";
+import LoginIcon from "@mui/icons-material/Login";
+import SendIcon from "@mui/icons-material/Send";
 
 const Main = () => {
   const navigate = useNavigate();
 
-  const moveLogin = () => {
-    navigate("/login");
+  const moveRepo = () => {
+    navigate("/mainRepo");
   };
 
   const handleKakaoLogin = () => {
@@ -17,6 +20,29 @@ const Main = () => {
   const handleNaverLogin = () => {
     window.location.href = "http://localhost:8080/oauth/naver";
   };
+
+  const [userId, setUserId] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null); // Menu anchor state
+  const open = Boolean(anchorEl);
+
+  // useEffect to check localStorage on component mount
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
+
+  const handleMenuClick = (event) => {
+    if (userId) {
+      moveRepo();
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       <meta charSet="utf-8" />
@@ -50,54 +76,74 @@ const Main = () => {
       {/* Core theme CSS (includes Bootstrap)*/}
       <link href="../css/styles.css" rel="stylesheet" />
       {/* Navigation*/}
-      <nav
-        className="navbar navbar-expand-lg navbar-light fixed-top shadow-sm"
-        id="mainNav"
-      >
-        <div className="container px-5">
-          <a className="navbar-brand fw-bold" href="#page-top">
-            Img Cloud
-          </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarResponsive"
-            aria-controls="navbarResponsive"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            Menu
-            <i className="bi-list" />
-          </button>
-          <div className="collapse navbar-collapse" id="navbarResponsive">
-            <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
-              <li className="nav-item">
-                <a className="nav-link me-lg-3" href="#features">
-                  About
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link me-lg-3" href="#download">
-                  Cost Plan
-                </a>
-              </li>
-            </ul>
-            <button
-              className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
-              data-bs-toggle="modal"
-            >
-              <span className="d-flex align-items-center">
-                <i className="bi-chat-text-fill me-2" />
-                <span className="small" onClick={moveLogin}>
-                  Get Started
-                </span>
-              </span>
-            </button>
-          </div>
-        </div>
-      </nav>
 
+      <div className="navbar">
+        <div
+          style={{
+            marginLeft: "180px",
+            fontFamily: "Kanit",
+            fontWeight: "600",
+            fontSize: "21px",
+          }}
+        >
+          Img Cloud
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleMenuClick}
+            size="large"
+            endIcon={userId ? <SendIcon /> : <LoginIcon />} // Conditionally rendering icons
+            sx={{
+              marginRight: "180px",
+              fontFamily: "Kanit",
+              fontWeight: "bold",
+              borderRadius: "20px",
+            }}
+          >
+            {userId ? "Get Started" : "Login"}
+          </Button>
+
+          {!userId && (
+            <Menu
+              id="simple-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleMenuClose}
+            >
+              <MenuItem>
+                <img
+                  src="img/kakao_login_large.png"
+                  alt="카카오로 로그인"
+                  onClick={handleKakaoLogin}
+                  style={{
+                    cursor: "pointer",
+                    width: "200px",
+                    height: "50px",
+                  }}
+                />
+              </MenuItem>
+              <MenuItem>
+                {" "}
+                <img
+                  src="img/btnW.png"
+                  alt="네이버로 로그인"
+                  onClick={handleNaverLogin}
+                  onMouseOver={(e) => (e.currentTarget.src = "img/btnG.png")}
+                  onMouseOut={(e) => (e.currentTarget.src = "img/btnW.png")}
+                  style={{
+                    cursor: "pointer",
+                    width: "200px",
+                    height: "50px",
+                  }}
+                />
+              </MenuItem>
+            </Menu>
+          )}
+        </div>
+      </div>
       {/* App features section*/}
       <section id="features">
         <div className="container px-5">
@@ -218,51 +264,6 @@ const Main = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <button
-              onClick={handleKakaoLogin}
-              style={{
-                backgroundColor: "#FFF067",
-                opacity: "67%",
-                border: "None",
-                padding: "10px 20px",
-                marginTop: "30px",
-                cursor: "pointer",
-                width: "200px",
-                height: "50px",
-                borderRadius: "15px",
-                fontSize: "14px",
-                fontFamily: "Nanum Gothic",
-                fontWeight: "700",
-              }}
-            >
-              카카오로 로그인
-            </button>
-          </div>
-          {/* 네이버 로그인 버튼 */}
-          <div>
-            <img
-              src="img/btnW.png"
-              alt="네이버로 로그인"
-              onClick={handleNaverLogin}
-              onMouseOver={(e) => (e.currentTarget.src = "img/btnG.png")}
-              onMouseOut={(e) => (e.currentTarget.src = "img/btnW.png")}
-              style={{
-                cursor: "pointer",
-                width: "200px",
-                height: "50px",
-                marginTop: "20px",
-              }}
-            />
           </div>
         </div>
       </section>
