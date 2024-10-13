@@ -1,5 +1,6 @@
 import React from "react";
 import "../css/styles.css";
+
 import { Link, useNavigate } from "react-router-dom";
 
 const Main = () => {
@@ -7,6 +8,14 @@ const Main = () => {
 
   const moveLogin = () => {
     navigate("/login");
+  };
+
+  const handleKakaoLogin = () => {
+    window.location.href = "http://localhost:8080/oauth/kakao";
+  };
+
+  const handleNaverLogin = () => {
+    window.location.href = "http://localhost:8080/oauth/naver";
   };
   return (
     <>
@@ -77,7 +86,6 @@ const Main = () => {
             <button
               className="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0"
               data-bs-toggle="modal"
-              data-bs-target="#feedbackModal"
             >
               <span className="d-flex align-items-center">
                 <i className="bi-chat-text-fill me-2" />
@@ -89,115 +97,7 @@ const Main = () => {
           </div>
         </div>
       </nav>
-      {/* Mashead header*/}
-      <header className="masthead">
-        <div className="container px-5">
-          <div className="row gx-5 align-items-center">
-            <div className="col-lg-6">
-              {/* Mashead text and app badges*/}
-              <div className="mb-5 mb-lg-0 text-center text-lg-start">
-                <h1 className="display-1 lh-1 mb-3">
-                  Manage your photos easily.
-                </h1>
-                <p className="lead fw-normal text-muted mb-5">
-                  Launch your mobile app landing page faster with this free,
-                  open source theme from Start Bootstrap!
-                </p>
-              </div>
-            </div>
-            <div className="col-lg-6">
-              {/* Masthead device mockup feature*/}
-              <div className="masthead-device-mockup">
-                <svg
-                  className="circle"
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient
-                      id="circleGradient"
-                      gradientTransform="rotate(45)"
-                    >
-                      <stop className="gradient-start-color" offset="0%" />
-                      <stop className="gradient-end-color" offset="100%" />
-                    </linearGradient>
-                  </defs>
-                  <circle cx={50} cy={50} r={50} />
-                </svg>
-                <svg
-                  className="shape-1 d-none d-sm-block"
-                  viewBox="0 0 240.83 240.83"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="-32.54"
-                    y="78.39"
-                    width="305.92"
-                    height="84.05"
-                    rx="42.03"
-                    transform="translate(120.42 -49.88) rotate(45)"
-                  />
-                  <rect
-                    x="-32.54"
-                    y="78.39"
-                    width="305.92"
-                    height="84.05"
-                    rx="42.03"
-                    transform="translate(-49.88 120.42) rotate(-45)"
-                  />
-                </svg>
-                <svg
-                  className="shape-2 d-none d-sm-block"
-                  viewBox="0 0 100 100"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx={50} cy={50} r={50} />
-                </svg>
-                <div className="device-wrapper">
-                  <div
-                    className="device"
-                    data-device="iPhoneX"
-                    data-orientation="portrait"
-                    data-color="black"
-                  >
-                    <div className="screen bg-black">
-                      {/* PUT CONTENTS HERE:*/}
-                      {/* * * This can be a video, image, or just about anything else.*/}
-                      {/* * * Set the max width of your media to 100% and the height to*/}
-                      {/* * * 100% like the demo example below.*/}
-                      <img
-                        // muted, autoPlay, loop 속성은 이미지에는 적용되지 않으므로 주석 처리.
-                        src="img/mainBurst2.jpg" // img/mainBurst2를 이미지 경로로 지정
-                        alt="Main Burst Image" // 접근성을 위한 alt 텍스트 추가
-                        style={{ maxWidth: "100%", height: "100%" }} // 이미지 스타일 적용
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-      {/* Quote/testimonial aside*/}
-      <aside className="text-center bg-gradient-primary-to-secondary">
-        <div className="container px-5">
-          <div className="row gx-5 justify-content-center">
-            <div className="col-xl-8">
-              <div className="h2 fs-1 text-white mb-4">
-                "An intuitive platform that simplifies image quality assessment,
-                format conversion, and enhancement — all in one seamless
-                experience!"
-              </div>
-              <img
-                src="img/imgcloud_whitelogo.png"
-                alt="..."
-                style={{ height: "3rem" }}
-              />
-            </div>
-          </div>
-        </div>
-      </aside>
+
       {/* App features section*/}
       <section id="features">
         <div className="container px-5">
@@ -254,7 +154,6 @@ const Main = () => {
               </div>
             </div>
             <div className="col-lg-4 order-lg-0">
-              {/* Features section device mockup*/}
               <div className="features-device-mockup">
                 <svg
                   className="circle"
@@ -309,12 +208,7 @@ const Main = () => {
                     data-color="black"
                   >
                     <div className="screen bg-black">
-                      {/* PUT CONTENTS HERE:*/}
-                      {/* * * This can be a video, image, or just about anything else.*/}
-                      {/* * * Set the max width of your media to 100% and the height to*/}
-                      {/* * * 100% like the demo example below.*/}
                       <img
-                        // muted, autoPlay, loop 속성은 이미지에는 적용되지 않으므로 주석 처리.
                         src="img/mainBurst2.jpg" // img/mainBurst2를 이미지 경로로 지정
                         alt="Main Burst Image" // 접근성을 위한 alt 텍스트 추가
                         style={{ maxWidth: "100%", height: "100%" }} // 이미지 스타일 적용
@@ -326,212 +220,52 @@ const Main = () => {
             </div>
           </div>
         </div>
-      </section>
-      {/* Basic features section*/}
-      <section className="bg-light">
-        <div className="container px-5">
-          <div className="row gx-5 align-items-center justify-content-center justify-content-lg-between">
-            <div className="col-12 col-lg-5">
-              <h2 className="display-4 lh-1 mb-4">
-                Enter a new age of web design
-              </h2>
-              <p className="lead fw-normal text-muted mb-5 mb-lg-0">
-                This section is perfect for featuring some information about
-                your application, why it was built, the problem it solves, or
-                anything else! There's plenty of space for text here, so don't
-                worry about writing too much.
-              </p>
-            </div>
-            <div className="col-sm-8 col-md-6">
-              <div className="px-5 px-sm-0">
-                <img
-                  className="img-fluid rounded-circle"
-                  src="https://source.unsplash.com/u8Jn2rzYIps/900x900"
-                  alt="..."
-                />
-              </div>
-            </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <button
+              onClick={handleKakaoLogin}
+              style={{
+                backgroundColor: "#FFF067",
+                opacity: "67%",
+                border: "None",
+                padding: "10px 20px",
+                marginTop: "30px",
+                cursor: "pointer",
+                width: "200px",
+                height: "50px",
+                borderRadius: "15px",
+                fontSize: "14px",
+                fontFamily: "Nanum Gothic",
+                fontWeight: "700",
+              }}
+            >
+              카카오로 로그인
+            </button>
+          </div>
+          {/* 네이버 로그인 버튼 */}
+          <div>
+            <img
+              src="img/btnW.png"
+              alt="네이버로 로그인"
+              onClick={handleNaverLogin}
+              onMouseOver={(e) => (e.currentTarget.src = "img/btnG.png")}
+              onMouseOut={(e) => (e.currentTarget.src = "img/btnW.png")}
+              style={{
+                cursor: "pointer",
+                width: "200px",
+                height: "50px",
+                marginTop: "20px",
+              }}
+            />
           </div>
         </div>
       </section>
-      {/* Call to action section*/}
-      <section className="cta" id="download">
-        <div className="cta-content">
-          <div className="container costPlan">
-            <div className="leftCost">
-              <div className="costName">Starter</div>
-            </div>
-            <div className="centerCost">
-              <div className="costName">Basic</div>
-            </div>
-            <div className="rightCost">
-              <div className="costName">Pro</div>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* App badge section*/}
-
-      {/* Footer*/}
-      <footer className="bg-black text-center py-5">
-        <div className="container px-5">
-          <div className="text-white-50 small">
-            <div className="mb-2">© ImgCloud 2024. All Rights Reserved.</div>
-            <a href="#!">Privacy</a>
-            <span className="mx-1">·</span>
-            <a href="#!">Terms</a>
-            <span className="mx-1">·</span>
-            <a href="#!">FAQ</a>
-          </div>
-        </div>
-      </footer>
-      {/* Feedback Modal*/}
-      <div
-        className="modal fade"
-        id="feedbackModal"
-        tabIndex={-1}
-        aria-labelledby="feedbackModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header bg-gradient-primary-to-secondary p-4">
-              <h5
-                className="modal-title font-alt text-white"
-                id="feedbackModalLabel"
-              >
-                Send feedback
-              </h5>
-              <button
-                className="btn-close btn-close-white"
-                type="button"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              />
-            </div>
-            <div className="modal-body border-0 p-4">
-              {/* * * * * * * * * * * * * * * **/}
-              {/* * * SB Forms Contact Form * **/}
-              {/* * * * * * * * * * * * * * * **/}
-              {/* This form is pre-integrated with SB Forms.*/}
-              {/* To make this form functional, sign up at*/}
-              {/* https://startbootstrap.com/solution/contact-forms*/}
-              {/* to get an API token!*/}
-              <form id="contactForm" data-sb-form-api-token="API_TOKEN">
-                {/* Name input*/}
-                <div className="form-floating mb-3">
-                  <input
-                    className="form-control"
-                    id="name"
-                    type="text"
-                    placeholder="Enter your name..."
-                    data-sb-validations="required"
-                  />
-                  <label htmlFor="name">Full name</label>
-                  <div
-                    className="invalid-feedback"
-                    data-sb-feedback="name:required"
-                  >
-                    A name is required.
-                  </div>
-                </div>
-                {/* Email address input*/}
-                <div className="form-floating mb-3">
-                  <input
-                    className="form-control"
-                    id="email"
-                    type="email"
-                    placeholder="name@example.com"
-                    data-sb-validations="required,email"
-                  />
-                  <label htmlFor="email">Email address</label>
-                  <div
-                    className="invalid-feedback"
-                    data-sb-feedback="email:required"
-                  >
-                    An email is required.
-                  </div>
-                  <div
-                    className="invalid-feedback"
-                    data-sb-feedback="email:email"
-                  >
-                    Email is not valid.
-                  </div>
-                </div>
-                {/* Phone number input*/}
-                <div className="form-floating mb-3">
-                  <input
-                    className="form-control"
-                    id="phone"
-                    type="tel"
-                    placeholder="(123) 456-7890"
-                    data-sb-validations="required"
-                  />
-                  <label htmlFor="phone">Phone number</label>
-                  <div
-                    className="invalid-feedback"
-                    data-sb-feedback="phone:required"
-                  >
-                    A phone number is required.
-                  </div>
-                </div>
-                {/* Message input*/}
-                <div className="form-floating mb-3">
-                  <textarea
-                    className="form-control"
-                    id="message"
-                    type="text"
-                    placeholder="Enter your message here..."
-                    style={{ height: "10rem" }}
-                    data-sb-validations="required"
-                    defaultValue={""}
-                  />
-                  <label htmlFor="message">Message</label>
-                  <div
-                    className="invalid-feedback"
-                    data-sb-feedback="message:required"
-                  >
-                    A message is required.
-                  </div>
-                </div>
-                {/* Submit success message*/}
-                {/**/}
-                {/* This is what your users will see when the form*/}
-                {/* has successfully submitted*/}
-                <div className="d-none" id="submitSuccessMessage">
-                  <div className="text-center mb-3">
-                    <div className="fw-bolder">Form submission successful!</div>
-                    To activate this form, sign up at
-                    <br />
-                    <a href="https://startbootstrap.com/solution/contact-forms">
-                      https://startbootstrap.com/solution/contact-forms
-                    </a>
-                  </div>
-                </div>
-                {/* Submit error message*/}
-                {/**/}
-                {/* This is what your users will see when there is*/}
-                {/* an error submitting the form*/}
-                <div className="d-none" id="submitErrorMessage">
-                  <div className="text-center text-danger mb-3">
-                    Error sending message!
-                  </div>
-                </div>
-                {/* Submit Button*/}
-                <div className="d-grid">
-                  <button
-                    className="btn btn-primary rounded-pill btn-lg disabled"
-                    id="submitButton"
-                    type="submit"
-                  >
-                    Submit
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 };

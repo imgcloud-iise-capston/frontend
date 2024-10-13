@@ -16,10 +16,25 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.filename2 {
+  width: 200px;
+  text-align: left;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 30px;
+}
 
 .score {
   width: 106px;
   text-align: center;
+}
+
+.score2 {
+  width: 50px;
+  text-align: center;
+  margin-right: 140px;
 }
 
 .list .blank {

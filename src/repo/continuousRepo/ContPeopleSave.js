@@ -51,6 +51,19 @@ const ContPeopleSave = ({ selectedFiles = [] }) => {
       const metadata = await extractMetadata(currentFile.file); // 메타데이터 추출
       const fileSize = formatFileSize(currentFile.file.size); // 파일 크기 변환
 
+      // 메타데이터 품질 점수 계산
+      let metaScore = 0;
+      if (metadata.ISO && metadata.ISO >= 100) metaScore += 1;
+      if (metadata.FStop && metadata.FStop >= 1.0) metaScore += 1;
+      if (metadata.WhiteBalance !== undefined) metaScore += 1;
+      if (metadata.ExposureTime && metadata.ExposureTime > 0) metaScore += 1;
+      if (
+        metadata.Resolution &&
+        metadata.Resolution !== "0x0" &&
+        metadata.Resolution !== null
+      )
+        metaScore += 1;
+
       // 메타데이터 undefined 값 변환
       const safeMetadata = {
         ISO: metadata.ISO ?? 0,
@@ -127,6 +140,10 @@ const ContPeopleSave = ({ selectedFiles = [] }) => {
         })
       );
       formData.append("userId", localStorage.getItem("userId"));
+      formData.append(
+        "metaScore",
+        new Blob([JSON.stringify(metaScore)], { type: "application/json" })
+      );
 
       try {
         const response = await axios.post(

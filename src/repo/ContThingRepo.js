@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Sort from "./header/Sort";
 import ContRepoNavi from "./continuousRepo/ContRepoNavi";
 import ContThingList from "./continuousRepo/ContThingList";
+import { Card, CardContent } from "@mui/material";
 
 const ContThingRepo = () => {
   const style = {
@@ -19,15 +20,25 @@ const ContThingRepo = () => {
   };
 
   return (
-    <div style={style}>
-      <ContRepoNavi
-        repoName="전체 영역 품질 분석"
-        repoType="contThing"
-        selectedFiles={selectedFiles}
-      />
-      <Sort />
-      <ContThingList onSelectedIdsChange={handleSelectedIdsChange} />
-    </div>
+    <Card
+      sx={{
+        width: "45%",
+        height: "85vh",
+        padding: "15px 0px",
+        margin: "20px auto",
+        boxShadow: 3,
+      }}
+    >
+      <CardContent>
+        <ContRepoNavi
+          repoName="전체 영역 품질 분석"
+          repoType="contThing"
+          selectedFiles={selectedFiles}
+        />
+        <Sort />
+        <ContThingList onSelectedIdsChange={handleSelectedIdsChange} />
+      </CardContent>
+    </Card>
   );
 };
 

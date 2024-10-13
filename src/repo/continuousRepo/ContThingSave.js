@@ -25,11 +25,25 @@ const ContThingSave = ({ selectedFiles }) => {
         const metadata = await extractMetadata(file.file);
         const formattedSize = formatFileSize(file.file.size);
 
+        // 메타데이터 품질 점수 계산
+        let metaScore = 0;
+        if (metadata.ISO && metadata.ISO >= 100) metaScore += 1;
+        if (metadata.FStop && metadata.FStop >= 1.0) metaScore += 1;
+        if (metadata.WhiteBalance !== undefined) metaScore += 1;
+        if (metadata.ExposureTime && metadata.ExposureTime > 0) metaScore += 1;
+        if (
+          metadata.Resolution &&
+          metadata.Resolution !== "0x0" &&
+          metadata.Resolution !== null
+        )
+          metaScore += 1;
+
         return {
           ...file,
           smallFile,
           metadata,
           size: formattedSize,
+          metaScore,
         };
       })
     );
@@ -60,6 +74,7 @@ const ContThingSave = ({ selectedFiles }) => {
       (file) => file.metadata?.GPSLongitude || null
     );
     const fileSizeList = updatedFiles.map((file) => file.size || null);
+    const metaScoreList = updatedFiles.map((file) => file.metaScore || null);
 
     formData.append("ISO", JSON.stringify(ISOList));
     formData.append("FStop", JSON.stringify(FStopList));
@@ -70,6 +85,7 @@ const ContThingSave = ({ selectedFiles }) => {
     formData.append("GPSLatitude", JSON.stringify(GPSLatitudeList));
     formData.append("GPSLongitude", JSON.stringify(GPSLongitudeList));
     formData.append("size", JSON.stringify(fileSizeList));
+    formData.append("metaScore", JSON.stringify(metaScoreList));
 
     const titles = updatedFiles.map((file) => file.file.name);
     formData.append("imageTitle", JSON.stringify({ titles }));

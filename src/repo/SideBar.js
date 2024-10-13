@@ -27,6 +27,10 @@ const SideBar = () => {
 
       {/* Nav Item - Dashboard */}
       <li className="nav-item active">
+        <Link className="nav-link" to="/contRepo">
+          <i className="fas fa-fw fa-tachometer-alt"></i>
+          <span>Image Upload</span>
+        </Link>
         <Link className="nav-link" to="/mainRepo">
           <i className="fas fa-fw fa-tachometer-alt"></i>
           <span>Storage</span>
