@@ -24,10 +24,7 @@ h2 {
 .modalHeader {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background-color: #72b3ff;
-  padding: 15px;
-  border-radius: 20px 20px 0 0;
+  justify-content: right;
 }
 .original {
   width: 48%;
@@ -37,7 +34,22 @@ h2 {
 
 .originalImg {
   display: flex;
+  width: 100%;
+  height: 42rem;
+  align-items: center;
+  justify-content: center;
 }
+
+.detailImg {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto; /* Adjusts height proportionally */
+  width: auto; /* Adjusts width proportionally */
+  object-fit: contain; /* Ensures image does not get cropped or distorted */
+
+  margin-right: 20px;
+}
+
 .originalMetadata {
   display: flex;
 }
@@ -49,13 +61,6 @@ h2 {
 }
 .transformedMetadata {
   display: flex;
-}
-.detailImg {
-  margin-right: 20px;
-  margin-top: 20px;
-  width: 50%;
-  height: 280px;
-  padding: 2%;
 }
 
 .metadataLeft {

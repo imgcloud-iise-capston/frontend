@@ -8085,7 +8085,6 @@ fieldset:disabled .btn {
   padding-left: 3rem !important;
 }
 
-
 .py-0 {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -11189,7 +11188,7 @@ html {
 }
 
 .text-gradient {
-  background: -webkit-linear-gradient(#2937f0, #9f1ae2);
+  background: -webkit-linear-gradient(#77a6fc, #0c54d8);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -11336,10 +11335,10 @@ section.cta:before {
   display: none;
 }
 .features-device-mockup .circle .gradient-start-color {
-  stop-color: #2937f0;
+  stop-color: #77a6fc;
 }
 .features-device-mockup .circle .gradient-end-color {
-  stop-color: #9f1ae2;
+  stop-color: #0c54d8;
 }
 .features-device-mockup .shape-1 {
   position: absolute;

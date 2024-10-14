@@ -5,6 +5,8 @@ import imageCompression from "browser-image-compression";
 import { jsPDF } from "jspdf";
 import { canvasRGBA } from "stackblur-canvas";
 import axios from "axios";
+import { Tabs, Tab } from "@mui/material";
+import { Card, CardContent, Typography, Box, Button } from "@mui/material";
 
 // ImageConverter 컴포넌트 정의
 const ImageConverter = ({
@@ -16,6 +18,7 @@ const ImageConverter = ({
   detailData,
   setShowRealResolution2,
   setShowBrisque,
+  setImageConvertUrl,
 }) => {
   const [convertedSizeMB, setConvertedSizeMB] = useState("");
   const [showFormatOptions, setShowFormatOptions] = useState(false);
@@ -48,7 +51,8 @@ const ImageConverter = ({
           const newFileName = `${fileNameWithoutExtension}.pdf`;
           setTransformedFileName(newFileName);
           const newImageUrl = URL.createObjectURL(newBlob);
-          setTransformedImageUrl(newImageUrl);
+
+          setImageConvertUrl(newImageUrl);
           setDownloadLink(newImageUrl);
           setChangeFileExtension("pdf");
         };
@@ -66,7 +70,7 @@ const ImageConverter = ({
         setConvertedSizeMB(newSizeMB);
 
         const newImageUrl = URL.createObjectURL(newBlob);
-        setTransformedImageUrl(newImageUrl);
+        setImageConvertUrl(newImageUrl);
         setDownloadLink(newImageUrl);
         setChangeFileExtension(type);
       }
@@ -97,20 +101,80 @@ const ImageConverter = ({
 
   return (
     <>
-      <button onClick={handleFormatButtonClick}>파일포맷 변환</button>
-      {showFormatOptions && (
-        <div className="formatOptions">
-          <button onClick={() => handleFormatOptionClick("jpeg")}>
-            JPEG로 변환
-          </button>
-          <button onClick={() => handleFormatOptionClick("png")}>
-            PNG로 변환
-          </button>
-          <button onClick={() => handleFormatOptionClick("pdf")}>
-            PDF로 변환
-          </button>
-        </div>
-      )}
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        paddingTop={2} // 원하는 값으로 조정, 예: 4는 32px
+      >
+        <Button
+          variant="outlined"
+          sx={{
+            fontWeight: "bold",
+            "&:hover": {
+              variant: "contained", // 호버 시 contained 스타일 적용
+              backgroundColor: "primary.main", // 기본 색상 유지
+              color: "white", // 텍스트 색상
+            },
+          }}
+          onClick={handleFormatButtonClick}
+        >
+          파일 포맷 변환
+        </Button>
+      </Box>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        marginTop="10px"
+      >
+        {showFormatOptions && (
+          <div className="formatOptions">
+            <Button
+              variant="outlined"
+              sx={{
+                fontWeight: "bold",
+                "&:hover": {
+                  variant: "contained", // 호버 시 contained 스타일 적용
+                  backgroundColor: "primary.main", // 기본 색상 유지
+                  color: "white", // 텍스트 색상
+                },
+              }}
+              onClick={() => handleFormatOptionClick("jpeg")}
+            >
+              JPEG로 변환
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                fontWeight: "bold",
+                "&:hover": {
+                  variant: "contained", // 호버 시 contained 스타일 적용
+                  backgroundColor: "primary.main", // 기본 색상 유지
+                  color: "white", // 텍스트 색상
+                },
+              }}
+              onClick={() => handleFormatOptionClick("png")}
+            >
+              PNG로 변환
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                fontWeight: "bold",
+                "&:hover": {
+                  variant: "contained", // 호버 시 contained 스타일 적용
+                  backgroundColor: "primary.main", // 기본 색상 유지
+                  color: "white", // 텍스트 색상
+                },
+              }}
+              onClick={() => handleFormatOptionClick("pdf")}
+            >
+              PDF로 변환
+            </Button>
+          </div>
+        )}
+      </Box>
     </>
   );
 };
@@ -119,7 +183,9 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [metaScore, setMetaScore] = useState(0);
   const [fileExtension, setFileExtension] = useState("");
   const [changeFileExtension, setChangeFileExtension] = useState("");
-  const [transformedImageUrl, setTransformedImageUrl] = useState("");
+  const [transformedImageUrl, setTransformedImageUrl] = useState(""); //압축 이미지 url
+  const [removeNoiseUrl, setRemoveNoiseUrl] = useState(""); //노이즈제거 이미지 url
+  const [imageConvertUrl, setImageConvertUrl] = useState(""); //파일 확장자 변경 url
   const [downloadLink, setDownloadLink] = useState("");
   const [blobData, setBlobData] = useState(null);
   const [compressedSizeMB, setCompressedSizeMB] = useState("");
@@ -128,6 +194,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
   const [showBrisque, setShowBrsique] = useState(false);
   const [transformedFileName, setTransformedFileName] = useState(""); // 오른쪽 파일 이름
   const [transfomedBrisque, setTransformedBrisque] = useState(0);
+  const [tabValue, setTabValue] = useState(0);
 
   const fileFromUrl = async (url, filename) => {
     try {
@@ -145,10 +212,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     if (detailData.peopleId) {
       console.log("people입니다.");
       try {
-        const image = await fileFromUrl(
-          transformedImageUrl,
-          detailData.imageTitle[0]
-        );
+        const image = await fileFromUrl(downloadLink, detailData.imageTitle[0]);
         if (!image) {
           throw new Error("Failed to create file from URL");
         }
@@ -189,10 +253,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     } else {
       //thing Img brisque 계산
       try {
-        const image = await fileFromUrl(
-          transformedImageUrl,
-          detailData.imageTitle[0]
-        );
+        const image = await fileFromUrl(downloadLink, detailData.imageTitle[0]);
         if (!image) {
           throw new Error("Failed to create file from URL");
         }
@@ -305,6 +366,21 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     }
   };
 
+  useEffect(() => {
+    // tabValue가 변경될 때 다운로드 링크를 설정
+    setShowBrsique(false);
+    setShowRealResolution2(false);
+    if (tabValue === 1 && transformedImageUrl) {
+      setDownloadLink(transformedImageUrl);
+    } else if (tabValue === 2 && removeNoiseUrl) {
+      setDownloadLink(removeNoiseUrl);
+    } else if (tabValue === 3 && imageConvertUrl) {
+      setDownloadLink(imageConvertUrl);
+    } else {
+      setDownloadLink(""); // 해당 링크가 없는 경우 빈 값 설정
+    }
+  }, [tabValue, transformedImageUrl, removeNoiseUrl, imageConvertUrl]);
+
   const handleDownload = () => {
     if (downloadLink && detailData.imageTitle) {
       const originalFileName = detailData.imageTitle[0];
@@ -344,7 +420,7 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
 
         canvas.toBlob((blob) => {
           const transformedUrl = URL.createObjectURL(blob);
-          setTransformedImageUrl(transformedUrl);
+          setRemoveNoiseUrl(transformedUrl);
           setDownloadLink(transformedUrl);
         }, blobData.type);
       };
@@ -362,6 +438,10 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
     setShowRealResolution2(true);
   };
 
+  const handleChangeTab = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -369,7 +449,6 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       style={{ content: { width: "80%", margin: "auto" } }}
     >
       <div className="modalHeader">
-        <h2>상세보기</h2>
         <button onClick={onRequestClose} className="closeButton">
           ✕
         </button>
@@ -377,78 +456,419 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
       <div className="total">
         <div className="original">
           <div className="originalImg">
-            {detailData && (
-              <>
-                <img
-                  src={detailData.imageUrl}
-                  alt={detailData.imageTitle}
-                  className="detailImg"
-                />
-                <p className="imgTitle">파일명 : {detailData.imageTitle}</p>
-              </>
+            {tabValue === 1 && transformedImageUrl !== "" ? (
+              <img
+                src={transformedImageUrl}
+                alt={detailData.imageTitle}
+                className="detailImg"
+              />
+            ) : tabValue === 2 && removeNoiseUrl !== "" ? (
+              <img
+                src={removeNoiseUrl}
+                alt={detailData.imageTitle}
+                className="detailImg"
+              />
+            ) : tabValue === 3 && imageConvertUrl !== "" ? (
+              <img
+                src={imageConvertUrl}
+                alt={detailData.imageTitle}
+                className="detailImg"
+              />
+            ) : (
+              <img
+                src={detailData.imageUrl}
+                alt={detailData.imageTitle}
+                className="detailImg"
+              />
             )}
           </div>
-          <div className="originalMetadata">
-            <div className="metadataLeft">
-              {detailData && (
-                <div className="metadataItem">
-                  <span>BRISQUE 품질점수 :</span>
-                  <span>{detailData.brisqueScore}</span>
-                </div>
-              )}
-              <div className="metadataItem">
-                <span>메타데이터 품질 점수 :</span>
-                <span>{metaScore}</span>
-              </div>
-              <div className="metadataItem">
-                <span>용량 :</span>
-                <span>{detailData.metadata.size}</span>
-              </div>
-              <div className="metadataItem">
-                <span>확장자 :</span>
-                <span>{fileExtension}</span>
-              </div>
-              {showRealResolution && (
-                <div className="metadataItem">
-                  <span>측정한 해상도 :</span>
-                  <span>{detailData.metadata.realResolution}</span>
-                </div>
-              )}
-            </div>
-            <div className="metadataRight">
-              <div className="metadataItem">
-                <span>메타데이터의 해상도 :</span>
-                <span>{detailData.metadata.resolution}</span>
-              </div>
-              <div className="metadataItem">
-                <span>White Balance :</span>
-                <span>{detailData.metadata.whiteBalance}</span>
-              </div>
-              <div className="metadataItem">
-                <span>F-stop :</span>
-                <span>{detailData.metadata.fstop}</span>
-              </div>
-              <div className="metadataItem">
-                <span>Exposure time :</span>
-                <span>{detailData.metadata.exposureTime}</span>
-              </div>
-              <div className="metadataItem">
-                <span>Iso :</span>
-                <span>{detailData.metadata.iso}</span>
-              </div>
-              <div className="metadataItem">
-                <span>GPS :</span>
-                <span>
-                  {detailData.metadata.gpslatitude}:
-                  {detailData.metadata.gpslongitude}
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="buttonList">
-            <button onClick={handleCompressImage}>압축</button>
-            <button onClick={handleRemoveNoise}>노이즈 제거</button>
-            <button onClick={handleShowRealResolution}>해상도 측정</button>
+        </div>
+
+        <div className="transformed">
+          <Tabs
+            value={tabValue}
+            onChange={handleChangeTab}
+            aria-label="Image options"
+          >
+            <Tab label="원본 이미지" />
+            <Tab label="압축" />
+            <Tab label="노이즈 제거" />
+            <Tab label="파일 변환" />
+          </Tabs>
+
+          {/* tabValue가 0일 때 카드가 항상 표시 */}
+          {tabValue === 0 && (
+            <Card>
+              <CardContent>
+                {detailData && (
+                  <>
+                    <Box display="flex" justifyContent="space-between">
+                      <Typography
+                        variant="h7"
+                        gutterBottom
+                        sx={{ fontFamily: "IBM Plex Sans KR" }}
+                      >
+                        파일명:
+                      </Typography>
+                      <Typography
+                        variant="h7"
+                        gutterBottom
+                        sx={{ fontFamily: "IBM Plex Sans KR" }}
+                      >
+                        {detailData.imageTitle}
+                      </Typography>
+                    </Box>
+                    <Box display="flex" justifyContent="space-between">
+                      <Typography
+                        gutterBottom
+                        sx={{ fontFamily: "IBM Plex Sans KR" }}
+                      >
+                        BRISQUE 품질점수:
+                      </Typography>
+                      <Typography
+                        gutterBottom
+                        sx={{ fontFamily: "IBM Plex Sans KR" }}
+                      >
+                        {detailData.brisqueScore}
+                      </Typography>
+                    </Box>
+                  </>
+                )}
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    메타데이터 품질 점수:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {metaScore}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    용량:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.size}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    확장자:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {fileExtension}
+                  </Typography>
+                </Box>
+                {showRealResolution && (
+                  <Box display="flex" justifyContent="space-between">
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      측정한 해상도:
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {detailData?.metadata?.realResolution}
+                    </Typography>
+                  </Box>
+                )}
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    메타데이터의 해상도:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.resolution}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    White Balance:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.whiteBalance}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    F-stop:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.fstop}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    Exposure time:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.exposureTime}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    Iso:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.iso}
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    GPS:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {detailData?.metadata?.gpslatitude} :{" "}
+                    {detailData?.metadata?.gpslongitude}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* tabValue가 1일 때 transformedImageUrl 여부에 따른 조건 */}
+          {tabValue === 1 && !transformedImageUrl && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              paddingTop={4} // 원하는 값으로 조정, 예: 4는 32px
+            >
+              <Button
+                variant="outlined"
+                sx={{
+                  fontWeight: "bold",
+                  "&:hover": {
+                    variant: "contained", // 호버 시 contained 스타일 적용
+                    backgroundColor: "primary.main", // 기본 색상 유지
+                    color: "white", // 텍스트 색상
+                  },
+                }}
+                onClick={handleCompressImage}
+              >
+                이미지 압축
+              </Button>
+            </Box>
+          )}
+          {tabValue === 1 && transformedImageUrl && (
+            <Card>
+              <CardContent>
+                <Typography
+                  variant="body1"
+                  gutterBottom
+                  sx={{ fontFamily: "IBM Plex Sans KR" }}
+                >
+                  이미지 압축이 완료되었습니다.
+                </Typography>
+                <br />
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    압축 후 이미지 용량:
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    {compressedSizeMB} MB
+                  </Typography>
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    압축 후 BRISQUE 품질 점수:
+                  </Typography>
+                  {showBrisque && (
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {transfomedBrisque}
+                    </Typography>
+                  )}
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    압축 후 해상도 :
+                  </Typography>
+                  {showRealResolution2 && (
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {detailData.metadata.realResolution}
+                    </Typography>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* tabValue가 2일 때 removeNoiseUrl 여부에 따른 조건 */}
+          {tabValue === 2 && !removeNoiseUrl && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              paddingTop={4} // 원하는 값으로 조정, 예: 4는 32px
+            >
+              <Button
+                variant="outlined"
+                sx={{
+                  fontWeight: "bold",
+                  "&:hover": {
+                    variant: "contained", // 호버 시 contained 스타일 적용
+                    backgroundColor: "primary.main", // 기본 색상 유지
+                    color: "white", // 텍스트 색상
+                  },
+                }}
+                onClick={handleRemoveNoise}
+              >
+                노이즈 제거
+              </Button>
+            </Box>
+          )}
+          {tabValue === 2 && removeNoiseUrl && (
+            <Card>
+              <CardContent>
+                <Typography
+                  variant="body1"
+                  gutterBottom
+                  sx={{ fontFamily: "IBM Plex Sans KR" }}
+                >
+                  노이즈 제거가 완료되었습니다.
+                </Typography>
+                <br />
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    노이즈 제거 후 BRISQUE 품질 점수:
+                  </Typography>
+                  {showBrisque && (
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {transfomedBrisque}
+                    </Typography>
+                  )}
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    노이즈 제거 후 해상도 :
+                  </Typography>
+                  {showRealResolution2 && (
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {detailData.metadata.realResolution}
+                    </Typography>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* tabValue가 3일 때 imageConvertUrl 여부에 따른 조건 */}
+          {tabValue === 3 && !imageConvertUrl && (
             <ImageConverter
               blobData={blobData}
               setTransformedImageUrl={setTransformedImageUrl}
@@ -458,61 +878,103 @@ const DetailModal = ({ isOpen, onRequestClose, detailData }) => {
               detailData={detailData}
               setShowRealResolution2={setShowRealResolution2}
               setShowBrisque={setShowBrsique}
+              setImageConvertUrl={setImageConvertUrl}
             />
-          </div>
-        </div>
-
-        <div className="transformed">
-          <div className="transformedImg">
-            {transformedImageUrl && (
-              <>
-                <img
-                  src={transformedImageUrl}
-                  alt="Transformed"
-                  className="detailImg"
+          )}
+          {tabValue === 3 && imageConvertUrl && (
+            <Card>
+              <CardContent>
+                <ImageConverter
+                  blobData={blobData}
+                  setTransformedImageUrl={setTransformedImageUrl}
+                  setDownloadLink={setDownloadLink}
+                  setChangeFileExtension={setChangeFileExtension}
+                  setTransformedFileName={setTransformedFileName}
+                  detailData={detailData}
+                  setShowRealResolution2={setShowRealResolution2}
+                  setShowBrisque={setShowBrsique}
+                  setImageConvertUrl={setImageConvertUrl}
                 />
-                <p className="imgTitle">파일명 : {transformedFileName}</p>
-              </>
-            )}
-          </div>
-          <div className="transformedMetadata">
-            <div className="metadataLeft">
-              {transformedImageUrl && showBrisque && (
-                <div className="metadataItem">
-                  <span>BRISQUE 품질 점수:</span>
-                  <span>{transfomedBrisque}</span>
-                </div>
-              )}
-              <div className="metadataItem">
-                <span>용량 :</span>
-                <span>{compressedSizeMB}</span>
-              </div>
-              <div className="metadataItem">
-                <span>확장자 :</span>
-                <span>{changeFileExtension}</span>
-              </div>
-              {transformedImageUrl && showRealResolution2 && (
-                <div className="metadataItem">
-                  <span>측정한 해상도 :</span>
-                  <span>{detailData.metadata.realResolution}</span>
-                </div>
-              )}
+                <Typography
+                  variant="body1"
+                  gutterBottom
+                  sx={{ fontFamily: "IBM Plex Sans KR" }}
+                >
+                  {changeFileExtension} 형식으로 파일 변환이 완료되었습니다.
+                </Typography>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    파일 포맷 변환 후 BRISQUE 품질 점수:
+                  </Typography>
+                  {showBrisque && (
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {transfomedBrisque}
+                    </Typography>
+                  )}
+                </Box>
+                <Box display="flex" justifyContent="space-between">
+                  <Typography
+                    variant="body1"
+                    gutterBottom
+                    sx={{ fontFamily: "IBM Plex Sans KR" }}
+                  >
+                    파일 포맷 변환 후 해상도 :
+                  </Typography>
+                  {showRealResolution2 && (
+                    <Typography
+                      variant="body1"
+                      gutterBottom
+                      sx={{ fontFamily: "IBM Plex Sans KR" }}
+                    >
+                      {detailData.metadata.realResolution}
+                    </Typography>
+                  )}
+                </Box>
+              </CardContent>
+            </Card>
+          )}
+          {tabValue !== 0 && (
+            <div className="buttonList2">
+              <button
+                onClick={handleDownload}
+                disabled={
+                  (tabValue === 1 && !transformedImageUrl) ||
+                  (tabValue === 2 && !removeNoiseUrl) ||
+                  (tabValue === 3 && !imageConvertUrl)
+                }
+              >
+                다운로드
+              </button>
+              <button
+                onClick={calculateBrisque}
+                disabled={
+                  (tabValue === 1 && !transformedImageUrl) ||
+                  (tabValue === 2 && !removeNoiseUrl) ||
+                  (tabValue === 3 && !imageConvertUrl)
+                }
+              >
+                Brisque 품질 점수 계산
+              </button>
+              <button
+                onClick={handleShowRealResolution2}
+                disabled={
+                  (tabValue === 1 && !transformedImageUrl) ||
+                  (tabValue === 2 && !removeNoiseUrl) ||
+                  (tabValue === 3 && !imageConvertUrl)
+                }
+              >
+                해상도 측정
+              </button>
             </div>
-          </div>
-          <div className="buttonList2">
-            <button onClick={handleDownload} disabled={!transformedImageUrl}>
-              다운로드
-            </button>
-            <button onClick={calculateBrisque} disabled={!transformedImageUrl}>
-              Brisque 품질 점수 계산
-            </button>
-            <button
-              onClick={handleShowRealResolution2}
-              disabled={!transformedImageUrl}
-            >
-              해상도 측정
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </Modal>
