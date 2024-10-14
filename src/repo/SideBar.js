@@ -41,14 +41,9 @@ const SideBar = () => {
         </Link>
       </li>
 
-      {/* Divider */}
-      <hr className="sidebar-divider" />
-
-      {/* Heading */}
-      <div className="sidebar-heading">Menu</div>
 
       {/* Nav Item - Pages Collapse Menu */}
-      <li className="nav-item">
+      <li className="nav-item active">
         <a className="nav-link collapsed" href="/">
           <span>Main Page</span>
         </a>
